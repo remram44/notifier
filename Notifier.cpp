@@ -15,7 +15,11 @@
 
 #include "Notifier.h"
 
-#include <iostream>
+#include <QMenu>
+#include <QAction>
+#include <QApplication>
+#include <QTimer>
+#include <QtDebug>
 
 Notifier::Notifier(QWidget *pParent)
   : QWidget::QWidget(pParent)
@@ -62,17 +66,17 @@ Notifier::Notifier(QWidget *pParent)
 
 void Notifier::refresh()
 {
-    std::cerr << "refresh()\n";
+    qDebug() << "refresh()\n";
     if(!m_pHTTP->hasPendingRequests())
         m_pHTTP->get(URI);
 }
 
-void Notifier::requestFinished(int id, bool error)
+void Notifier::requestFinished(int /*id*/, bool error)
 {
-    std::cerr << "requestFinished() ";
+    qDebug() << "requestFinished()";
     if(error)
     {
-        std::cerr << "erreur\n";
+        qDebug() << "erreur";
         m_pTrayIcon->showMessage("Teeworlds-notifier", "Erreur : "
             + m_pHTTP->errorString(), QSystemTrayIcon::Warning);
         m_pTrayIcon->show();
@@ -97,7 +101,7 @@ void Notifier::requestFinished(int id, bool error)
             }
             pos += regexp.matchedLength();
         }
-        std::cerr << nb << " resultats\n";
+        qDebug() << nb << "resultats";
         if(nb > 0)
         {
             static int old_nb = 0;

@@ -16,13 +16,14 @@
 #ifndef NOTIFIER_H
 #define NOTIFIER_H
 
-#include <QtGui>
+#include <QWidget>
+#include <QSystemTrayIcon>
 #include <QHttp>
 #include <QSound>
 
-#define HOST "yoshi.rez-gif.supelec.fr"
-#define PORT 80
-#define URI "/tw/"
+const QString HOST = "yoshi.rez-gif.supelec.fr";
+const int PORT = 80;
+const QString URI = "/tw/";
 
 #ifndef PREFIX
 #define PREFIX "/usr/local"
