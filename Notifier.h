@@ -38,6 +38,8 @@ private:
     QSound *m_pBeep;
     QHttp *m_pHTTP;
 
+    int old_nb;
+
 public:
     Notifier(QWidget *pParent = NULL);
 

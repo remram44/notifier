@@ -23,7 +23,7 @@
 #include <QtDebug>
 
 Notifier::Notifier(QWidget *pParent)
-  : QWidget::QWidget(pParent)
+  : QWidget::QWidget(pParent), old_nb(0)
 {
     setWindowTitle("Teeworlds-Notifier");
 
@@ -103,7 +103,6 @@ void Notifier::requestFinished(int /*id*/, bool error)
         qDebug() << msgs.count() << "resultats";
         if(msgs.count() > 0)
         {
-            static int old_nb = 0;
             if(msgs.count() != old_nb)
             {
                 m_pBeep->play();
