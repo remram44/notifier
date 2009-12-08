@@ -19,6 +19,7 @@
 #include <QAction>
 #include <QApplication>
 #include <QTimer>
+#include <QStringList>
 #include <QtDebug>
 
 Notifier::Notifier(QWidget *pParent)
@@ -88,29 +89,27 @@ void Notifier::requestFinished(int /*id*/, bool error)
             "<td>(\\d+)/(\\d+)</td>\\s+"
             "<td>([^<]+)</td>");
         int pos = 0;
-        QString msg;
-        int nb = 0;
+        QStringList msgs;
         while((pos = regexp.indexIn(page, pos)) != -1)
         {
             bool ok;
             if(regexp.cap(2).toInt(&ok, 10) > 0 && ok)
             {
-                msg += QString("%1 joueurs sur %2 en %3\n").arg(regexp.cap(2))
+                msgs << QString("%1 joueurs sur %2 en %3\n").arg(regexp.cap(2))
                     .arg(regexp.cap(4)).arg(regexp.cap(1));
-                nb++;
             }
             pos += regexp.matchedLength();
         }
-        qDebug() << nb << "resultats";
-        if(nb > 0)
+        qDebug() << msgs.count() << "resultats";
+        if(msgs.count() > 0)
         {
             static int old_nb = 0;
-            if(nb != old_nb)
+            if(msgs.count() != old_nb)
             {
                 m_pBeep->play();
-                old_nb = nb;
+                old_nb = msgs.count();
             }
-            m_pTrayIcon->showMessage("Teeworlds-notifier", msg,
+            m_pTrayIcon->showMessage("Teeworlds-notifier", msgs.join("\n"),
                 QSystemTrayIcon::Information);
             m_pTrayIcon->show();
         }
