@@ -23,7 +23,7 @@
 #include <QtDebug>
 
 Notifier::Notifier(QWidget *pParent)
-  : QWidget::QWidget(pParent), old_nb(0)
+  : QWidget::QWidget(pParent), old_nb(0), forceDisplay(false)
 {
     setWindowTitle("Teeworlds-Notifier");
 
@@ -31,7 +31,7 @@ Notifier::Notifier(QWidget *pParent)
     QMenu *trayMenu = new QMenu(this);
     {
         QAction *refreshAction = new QAction("Vérifier", this);
-        connect(refreshAction, SIGNAL(triggered()), this, SLOT(refresh()));
+        connect(refreshAction, SIGNAL(triggered()), this, SLOT(forceRefresh()));
         trayMenu->addAction(refreshAction);
     }
     {
@@ -72,6 +72,13 @@ void Notifier::refresh()
         m_pHTTP->get(URI);
 }
 
+void Notifier::forceRefresh()
+{
+    qDebug() << "forceRefresh()\n";
+    forceDisplay = true; // displays the result no matter what
+    refresh();
+}
+
 void Notifier::requestFinished(int /*id*/, bool error)
 {
     qDebug() << "requestFinished()";
@@ -89,13 +96,16 @@ void Notifier::requestFinished(int /*id*/, bool error)
             "<td>(\\d+)/(\\d+)</td>\\s+"
             "<td>([^<]+)</td>");
         int pos = 0;
+        int nb = 0;
         QStringList msgs;
         while((pos = regexp.indexIn(page, pos)) != -1)
         {
             bool ok;
-            if(regexp.cap(2).toInt(&ok, 10) > 0 && ok)
+            if( (regexp.cap(2).toInt(&ok, 10) > 0 && ok) || forceDisplay)
             {
-                msgs << QString("%1 joueurs sur %2 en %3\n").arg(regexp.cap(2))
+                if(regexp.cap(2).toInt(&ok, 10) > 0 && ok)
+                    nb++;
+                msgs << QString("%1 joueurs sur %2 en %3").arg(regexp.cap(2))
                     .arg(regexp.cap(4)).arg(regexp.cap(1));
             }
             pos += regexp.matchedLength();
@@ -103,14 +113,15 @@ void Notifier::requestFinished(int /*id*/, bool error)
         qDebug() << msgs.count() << "resultats";
         if(msgs.count() > 0)
         {
-            if(msgs.count() != old_nb)
+            if(nb != old_nb)
             {
                 m_pBeep->play();
-                old_nb = msgs.count();
+                old_nb = nb;
             }
             m_pTrayIcon->showMessage("Teeworlds-notifier", msgs.join("\n"),
                 QSystemTrayIcon::Information);
             m_pTrayIcon->show();
+            forceDisplay = false;
         }
     }
 }

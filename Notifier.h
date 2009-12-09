@@ -39,12 +39,14 @@ private:
     QHttp *m_pHTTP;
 
     int old_nb;
+    bool forceDisplay;
 
 public:
     Notifier(QWidget *pParent = NULL);
 
 public slots:
     void refresh();
+    void forceRefresh();
     void requestFinished(int id, bool error);
 
 };
