@@ -22,8 +22,10 @@
 #include <QStringList>
 #include <QtDebug>
 
+#include "Teeworlds.h"
+
 Notifier::Notifier(QWidget *pParent)
-  : QWidget::QWidget(pParent), old_nb(0), forceDisplay(false)
+  : QWidget::QWidget(pParent)
 {
     setWindowTitle("Teeworlds-Notifier");
 
@@ -31,7 +33,8 @@ Notifier::Notifier(QWidget *pParent)
     QMenu *trayMenu = new QMenu(this);
     {
         QAction *refreshAction = new QAction("Vérifier", this);
-        connect(refreshAction, SIGNAL(triggered()), this, SLOT(forceRefresh()));
+        connect(refreshAction, SIGNAL(triggered()),
+            this, SIGNAL(forceRefreshAll()));
         trayMenu->addAction(refreshAction);
     }
     {
@@ -53,75 +56,40 @@ Notifier::Notifier(QWidget *pParent)
 
     m_pBeep->setLoops(1);
 
-    m_pHTTP = new QHttp(HOST, PORT, this);
-    connect(m_pHTTP, SIGNAL(requestFinished(int, bool)),
-        this, SLOT(requestFinished(int, bool)));
+    {
+        Server *tw = new TeeworldsHtml("yoshi.rez-gif.supelec.fr", 80, "/tw/");
+        connect(this, SIGNAL(refreshAll()), tw, SLOT(refresh()));
+        connect(this, SIGNAL(forceRefreshAll()), tw, SLOT(forceRefresh()));
+        connect(tw, SIGNAL(infosChanged(QString, int, int, QString, QString)),
+            this, SLOT(infosChanged(QString, int, int, QString, QString)));
+        connect(tw, SIGNAL(errorEncountered(QString)),
+            this, SLOT(displayError(QString)));
+        m_Servers.insert(tw);
+    }
 
-    refresh();
+    refreshAll();
 
     QTimer *timer = new QTimer(this);
     timer->setSingleShot(false);
-    connect(timer, SIGNAL(timeout()), this, SLOT(refresh()));
+    connect(timer, SIGNAL(timeout()), this, SIGNAL(refreshAll()));
     timer->start(30000);
 }
 
-void Notifier::refresh()
+void Notifier::displayError(QString error)
 {
-    qDebug() << "refresh()\n";
-    if(!m_pHTTP->hasPendingRequests())
-        m_pHTTP->get(URI);
+    m_pTrayIcon->showMessage("Teeworlds-notifier", error,
+        QSystemTrayIcon::Warning);
 }
 
-void Notifier::forceRefresh()
+void Notifier::infosChanged(QString game, int players, int max, QString map,
+    QString mode)
 {
-    qDebug() << "forceRefresh()\n";
-    forceDisplay = true; // displays the result no matter what
-    refresh();
-}
-
-void Notifier::requestFinished(int /*id*/, bool error)
-{
-    qDebug() << "requestFinished()";
-    if(error)
-    {
-        qDebug() << "erreur";
-        m_pTrayIcon->showMessage("Teeworlds-notifier", "Erreur : "
-            + m_pHTTP->errorString(), QSystemTrayIcon::Warning);
-        m_pTrayIcon->show();
-    }
+    if(max > 0)
+        m_pTrayIcon->showMessage(game, QString("%1/%2 joueurs sur %3 en %4")
+            .arg(players).arg(max).arg(map).arg(mode),
+            QSystemTrayIcon::Information);
     else
-    {
-        QByteArray page = m_pHTTP->readAll();
-        QRegExp regexp("<td>(DM|TDM|CTF)</td>\\s+"
-            "<td>(\\d+)/(\\d+)</td>\\s+"
-            "<td>([^<]+)</td>");
-        int pos = 0;
-        int nb = 0;
-        QStringList msgs;
-        while((pos = regexp.indexIn(page, pos)) != -1)
-        {
-            bool ok;
-            if( (regexp.cap(2).toInt(&ok, 10) > 0 && ok) || forceDisplay)
-            {
-                if(regexp.cap(2).toInt(&ok, 10) > 0 && ok)
-                    nb++;
-                msgs << QString("%1 joueurs sur %2 en %3").arg(regexp.cap(2))
-                    .arg(regexp.cap(4)).arg(regexp.cap(1));
-            }
-            pos += regexp.matchedLength();
-        }
-        qDebug() << msgs.count() << "resultats";
-        if(msgs.count() > 0)
-        {
-            if(nb != old_nb)
-            {
-                m_pBeep->play();
-                old_nb = nb;
-            }
-            m_pTrayIcon->showMessage("Teeworlds-notifier", msgs.join("\n"),
-                QSystemTrayIcon::Information);
-            m_pTrayIcon->show();
-            forceDisplay = false;
-        }
-    }
+        m_pTrayIcon->showMessage(game, QString("%1 joueurs sur %3 en %4")
+            .arg(players).arg(map).arg(mode),
+            QSystemTrayIcon::Information);
 }

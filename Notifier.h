@@ -18,17 +18,48 @@
 
 #include <QWidget>
 #include <QSystemTrayIcon>
-#include <QHttp>
 #include <QSound>
-
-const QString HOST = "yoshi.rez-gif.supelec.fr";
-const int PORT = 80;
-const QString URI = "/tw/";
+#include <QSet>
 
 #ifndef PREFIX
 #define PREFIX "/usr/local"
 #endif
 
+/**
+ * A server we can query for players information.
+ */
+class Server : public QObject {
+
+    Q_OBJECT
+
+public slots:
+    /**
+     * Update infos by querying the server.
+     */
+    virtual void refresh() = 0;
+
+    /**
+     * Forced update: emit infosChanged() no matter what.
+     */
+    virtual void forceRefresh() = 0;
+
+signals:
+    /**
+     * Signal emitted when new informations are available.
+     */
+    void infosChanged(QString game, int players, int max, QString map,
+        QString mode);
+
+    /**
+     * Signal emitted on errors.
+     */
+    void errorEncountered(QString text);
+
+};
+
+/**
+ * The notifier.
+ */
 class Notifier : public QWidget {
 
     Q_OBJECT
@@ -36,18 +67,20 @@ class Notifier : public QWidget {
 private:
     QSystemTrayIcon *m_pTrayIcon;
     QSound *m_pBeep;
-    QHttp *m_pHTTP;
 
-    int old_nb;
-    bool forceDisplay;
+    QSet<Server*> m_Servers;
+
+private slots:
+    void displayError(QString error);
+    void infosChanged(QString game, int players, int max, QString map,
+        QString mode);
 
 public:
     Notifier(QWidget *pParent = NULL);
 
-public slots:
-    void refresh();
-    void forceRefresh();
-    void requestFinished(int id, bool error);
+signals:
+    void refreshAll();
+    void forceRefreshAll();
 
 };
 

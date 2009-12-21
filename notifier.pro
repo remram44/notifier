@@ -7,11 +7,11 @@ TARGET =
 DEPENDPATH += .
 INCLUDEPATH += .
 
-CONFIG += release
+CONFIG += release console
 DESTDIR = ./
 
 QT += network
 
 # Input
-HEADERS = Notifier.h
-SOURCES = Notifier.cpp main.cpp
+HEADERS = Notifier.h Teeworlds.h
+SOURCES = Notifier.cpp main.cpp Teeworlds.cpp
