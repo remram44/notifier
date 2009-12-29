@@ -19,7 +19,7 @@
 #include <QWidget>
 #include <QSystemTrayIcon>
 #include <QSound>
-#include <QSet>
+#include <QMap>
 
 #ifndef PREFIX
 #define PREFIX "/usr/local"
@@ -31,6 +31,27 @@
 class Server : public QObject {
 
     Q_OBJECT
+
+public:
+    /**
+     * The number of players currently in-game.
+     */
+    virtual unsigned int numPlayers() const = 0;
+
+    /**
+     * The maximum number of players that can join the game, or 0.
+     */
+    virtual unsigned int maxPlayers() const;
+
+    /**
+     * The map's name, if relevant, or QString().
+     */
+    virtual QString map() const;
+
+    /**
+     * The game mode, if relevant, or QString().
+     */
+    virtual QString mode() const;
 
 public slots:
     /**
@@ -47,7 +68,7 @@ signals:
     /**
      * Signal emitted when new informations are available.
      */
-    void infosChanged(QString game, int players, int max, QString map,
+    void infosChanged(unsigned int players, unsigned int max, QString map,
         QString mode);
 
     /**
@@ -68,12 +89,11 @@ private:
     QSystemTrayIcon *m_pTrayIcon;
     QSound *m_pBeep;
 
-    QSet<Server*> m_Servers;
+    QMap<Server*, QString> m_aServers;
 
 private slots:
     void displayError(QString error);
-    void infosChanged(QString game, int players, int max, QString map,
-        QString mode);
+    void infosChanged(int players, int max, QString map, QString mode);
 
 public:
     Notifier(QWidget *pParent = NULL);

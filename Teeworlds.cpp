@@ -17,11 +17,31 @@
 #include <QtDebug>
 
 TeeworldsHtml::TeeworldsHtml(const char *host, int port, const char *uri)
-  : m_sURI(uri), forceDisplay(false)
+  : m_sURI(uri), forceDisplay(false), m_iNumPlayers(0), m_iMaxPlayers(0)
 {
     m_pHTTP = new QHttp(host, port, this);
     connect(m_pHTTP, SIGNAL(requestFinished(int, bool)),
         this, SLOT(requestFinished(int, bool)));
+}
+
+unsigned int TeeworldsHtml::numPlayers() const
+{
+    return m_iNumPlayers;
+}
+
+unsigned int TeeworldsHtml::maxPlayers() const
+{
+    return m_iMaxPlayers;
+}
+
+QString TeeworldsHtml::map() const
+{
+    return m_sMap;
+}
+
+QString TeeworldsHtml::mode() const
+{
+    return m_sMode;
 }
 
 void TeeworldsHtml::refresh()
@@ -43,7 +63,7 @@ void TeeworldsHtml::requestFinished(int /*id*/, bool error)
     qDebug() << "TeeworldsHtml::requestFinished()";
     if(error)
     {
-        emit errorEncountered("Erreur : " + m_pHTTP->errorString());
+        emit errorEncountered(m_pHTTP->errorString());
     }
     else
     {
@@ -59,13 +79,23 @@ void TeeworldsHtml::requestFinished(int /*id*/, bool error)
             int max, players = regexp.cap(2).toInt(&ok, 10);
             if(ok)
                 max = regexp.cap(3).toInt(&ok, 10);
-            if(ok && (players > 0 || forceDisplay) )
+            if(ok && players > 0)
             {
-                emit infosChanged("Teeworlds", players, max, regexp.cap(4),
-                    regexp.cap(1));
+                m_iNumPlayers = players;
+                m_iMaxPlayers = max;
+                m_sMap = regexp.cap(4);
+                m_sMode = regexp.cap(1);
+                emit infosChanged(m_iNumPlayers, m_iMaxPlayers, m_sMap,
+                    m_sMode);
             }
             pos += regexp.matchedLength();
         }
+        m_iNumPlayers = 0;
+        m_iMaxPlayers = 0;
+        m_sMap = QString();
+        m_sMode = QString();
+        if(forceDisplay)
+            emit infosChanged(0, 0, QString(), QString());
         forceDisplay = false;
     }
 }

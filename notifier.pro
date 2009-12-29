@@ -13,5 +13,5 @@ DESTDIR = ./
 QT += network
 
 # Input
-HEADERS = Notifier.h Teeworlds.h
-SOURCES = Notifier.cpp main.cpp Teeworlds.cpp
+HEADERS = Notifier.h Teeworlds.h GameSpy.h
+SOURCES = Notifier.cpp main.cpp Teeworlds.cpp GameSpy.cpp

@@ -23,11 +23,27 @@
 #include <QtDebug>
 
 #include "Teeworlds.h"
+#include "GameSpy.h"
+
+unsigned int Server::maxPlayers() const
+{
+    return 0;
+}
+
+QString Server::map() const
+{
+    return QString();
+}
+
+QString Server::mode() const
+{
+    return QString();
+}
 
 Notifier::Notifier(QWidget *pParent)
   : QWidget::QWidget(pParent)
 {
-    setWindowTitle("Teeworlds-Notifier");
+    setWindowTitle("Notifier");
 
     // System tray icon creation
     QMenu *trayMenu = new QMenu(this);
@@ -49,8 +65,8 @@ Notifier::Notifier(QWidget *pParent)
     m_pTrayIcon->setIcon(QIcon("icon.png"));
     m_pBeep = new QSound("beep.wav");
 #else
-    m_pTrayIcon->setIcon(QIcon(PREFIX "/share/teeworlds-notifier/icon.png"));
-    m_pBeep = new QSound(PREFIX "/share/teeworlds-notifier/beep.wab");
+    m_pTrayIcon->setIcon(QIcon(PREFIX "/share/notifier/icon.png"));
+    m_pBeep = new QSound(PREFIX "/share/notifier/beep.wab");
 #endif
     m_pTrayIcon->show();
 
@@ -60,11 +76,11 @@ Notifier::Notifier(QWidget *pParent)
         Server *tw = new TeeworldsHtml("yoshi.rez-gif.supelec.fr", 80, "/tw/");
         connect(this, SIGNAL(refreshAll()), tw, SLOT(refresh()));
         connect(this, SIGNAL(forceRefreshAll()), tw, SLOT(forceRefresh()));
-        connect(tw, SIGNAL(infosChanged(QString, int, int, QString, QString)),
-            this, SLOT(infosChanged(QString, int, int, QString, QString)));
+        connect(tw, SIGNAL(infosChanged(int, int, QString, QString)),
+            this, SLOT(infosChanged(int, int, QString, QString)));
         connect(tw, SIGNAL(errorEncountered(QString)),
             this, SLOT(displayError(QString)));
-        m_Servers.insert(tw);
+        m_aServers.insert(tw, "Teeworlds (yoshi)");
     }
 
     refreshAll();
@@ -75,21 +91,29 @@ Notifier::Notifier(QWidget *pParent)
     timer->start(30000);
 }
 
+// TODO : queue error messages to display all of them
+// (flush on refreshAll())
 void Notifier::displayError(QString error)
 {
-    m_pTrayIcon->showMessage("Teeworlds-notifier", error,
+    Server *serv = qobject_cast<Server*>(sender());
+    QString name = serv?m_aServers[serv]:"(unknown origin)";
+    m_pTrayIcon->showMessage(name, QString("Erreur : ") + error,
         QSystemTrayIcon::Warning);
 }
 
-void Notifier::infosChanged(QString game, int players, int max, QString map,
+void Notifier::infosChanged(int players, int max, QString map,
     QString mode)
 {
+    Server *serv = qobject_cast<Server*>(sender());
+    if(!serv)
+        return ;
+    QString name = m_aServers[serv];
     if(max > 0)
-        m_pTrayIcon->showMessage(game, QString("%1/%2 joueurs sur %3 en %4")
+        m_pTrayIcon->showMessage(name, QString("%1/%2 joueurs sur %3 en %4")
             .arg(players).arg(max).arg(map).arg(mode),
             QSystemTrayIcon::Information);
     else
-        m_pTrayIcon->showMessage(game, QString("%1 joueurs sur %3 en %4")
+        m_pTrayIcon->showMessage(name, QString("%1 joueurs sur %3 en %4")
             .arg(players).arg(map).arg(mode),
             QSystemTrayIcon::Information);
 }

@@ -31,19 +31,28 @@ private:
     QString m_sURI;
     bool forceDisplay;
 
-private slots:
-    void requestFinished(int id, bool error);
+    unsigned int m_iNumPlayers;
+    unsigned int m_iMaxPlayers;
+    QString m_sMap;
+    QString m_sMode;
 
 public:
     TeeworldsHtml(const char *host, int port, const char *uri);
+
+    unsigned int numPlayers() const;
+    unsigned int maxPlayers() const;
+    QString map() const;
+    QString mode() const;
+
+private slots:
+    void requestFinished(int id, bool error);
 
 public slots:
     void refresh();
     void forceRefresh();
 
 signals:
-    void infosChanged(QString game, int players, int max, QString map,
-        QString mode);
+    void infosChanged(int players, int max, QString map, QString mode);
     void errorEncountered(QString text);
 
 };
