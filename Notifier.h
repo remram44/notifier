@@ -26,6 +26,23 @@
 #endif
 
 /**
+ * Utility function.
+ *
+ * Indicate whether the assignment changes the destination's value.
+ */
+template<typename T>
+bool confirm_assign(T *dst, const T &src)
+{
+    if(*dst != src)
+    {
+        *dst = src;
+        return true;
+    }
+    else
+        return false;
+}
+
+/**
  * A server we can query for players information.
  */
 class Server : public QObject {
