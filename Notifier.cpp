@@ -82,6 +82,16 @@ Notifier::Notifier(QWidget *pParent)
             this, SLOT(displayError(QString)));
         m_aServers.insert(tw, "Teeworlds (yoshi)");
     }
+    {
+        Server *ut = new GameSpyServer("mario.rez-gif.supelec.fr", 7787);
+        connect(this, SIGNAL(refreshAll()), ut, SLOT(refresh()));
+        connect(this, SIGNAL(forceRefreshAll()), ut, SLOT(forceRefresh()));
+        connect(ut, SIGNAL(infosChanged(int, int, QString, QString)),
+            this, SLOT(infosChanged(int, int, QString, QString)));
+        connect(ut, SIGNAL(errorEncountered(QString)),
+            this, SLOT(displayError(QString)));
+        m_aServers.insert(ut, "UT2004 (mario)");
+    }
 
     refreshAll();
 
