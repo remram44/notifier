@@ -22,7 +22,7 @@
 #include <QStringList>
 #include <QtDebug>
 
-#include "Teeworlds.h"
+#include "TeeworldsHtml.h"
 #include "GameSpy.h"
 
 unsigned int Server::maxPlayers() const

@@ -13,7 +13,7 @@
  *  0. You just DO WHAT THE FUCK YOU WANT TO.
  */
 
-#include "Teeworlds.h"
+#include "TeeworldsHtml.h"
 #include <QtDebug>
 
 TeeworldsHtml::TeeworldsHtml(const char *host, int port, const char *uri)
