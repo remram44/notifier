@@ -13,6 +13,9 @@
  *  0. You just DO WHAT THE FUCK YOU WANT TO.
  */
 
+#ifndef TEEWORLDSHTML_H
+#define TEEWORLDSHTML_H
+
 #include "Notifier.h"
 #include <QHttp>
 
@@ -56,3 +59,5 @@ signals:
     void errorEncountered(QString text);
 
 };
+
+#endif

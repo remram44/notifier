@@ -13,6 +13,9 @@
  *  0. You just DO WHAT THE FUCK YOU WANT TO.
  */
 
+#ifndef GAMESPY_H
+#define GAMESPY_H
+
 #include "Notifier.h"
 #include <QUdpSocket>
 
@@ -54,3 +57,5 @@ signals:
     void errorEncountered(QString text);
 
 };
+
+#endif
