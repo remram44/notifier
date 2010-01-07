@@ -42,6 +42,16 @@ bool confirm_assign(T *dst, const T &src)
         return false;
 }
 
+class ServerError : public std::exception {
+private:
+    QString w;
+
+public:
+    ServerError(const QString error);
+    virtual const char *what() const throw();
+    virtual ~ServerError() throw() {}
+};
+
 /**
  * A server we can query for players information.
  */
@@ -72,18 +82,13 @@ public:
 
 public slots:
     /**
-     * Update infos by querying the server.
+     * Forcibly update the information by querying the server.
      */
     virtual void refresh() = 0;
 
-    /**
-     * Forced update: emit infosChanged() no matter what.
-     */
-    virtual void forceRefresh() = 0;
-
 signals:
     /**
-     * Signal emitted when new informations are available.
+     * Signal emitted when the informations have changed.
      */
     void infosChanged(unsigned int players, unsigned int max, QString map,
         QString mode);
@@ -117,7 +122,6 @@ public:
 
 signals:
     void refreshAll();
-    void forceRefreshAll();
 
 };
 

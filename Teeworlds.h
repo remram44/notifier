@@ -27,7 +27,6 @@ class TeeworldsServer : public Server {
     Q_OBJECT
 
 private:
-    bool m_bForceDisplay;
     QUdpSocket *m_pUdpSocket;
     QString m_sHost;
     int m_iPort;
@@ -46,11 +45,11 @@ public:
     QString mode() const;
 
 private slots:
+    void query();
     void receiveData();
 
 public slots:
     void refresh();
-    void forceRefresh();
 
 signals:
     void infosChanged(int players, int max, QString map, QString mode);

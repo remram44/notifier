@@ -15,13 +15,19 @@
 
 #include "TeeworldsHtml.h"
 #include <QtDebug>
+#include <QTimer>
 
 TeeworldsHtml::TeeworldsHtml(const char *host, int port, const char *uri)
-  : m_sURI(uri), forceDisplay(false), m_iNumPlayers(0), m_iMaxPlayers(0)
+  : m_sURI(uri), m_iNumPlayers(0), m_iMaxPlayers(0)
 {
     m_pHTTP = new QHttp(host, port, this);
     connect(m_pHTTP, SIGNAL(requestFinished(int, bool)),
         this, SLOT(requestFinished(int, bool)));
+
+    QTimer *timer = new QTimer(this);
+    timer->setSingleShot(false);
+    connect(timer, SIGNAL(timeout()), this, SLOT(query()));
+    timer->start(30000);
 }
 
 unsigned int TeeworldsHtml::numPlayers() const
@@ -44,23 +50,19 @@ QString TeeworldsHtml::mode() const
     return m_sMode;
 }
 
-void TeeworldsHtml::refresh()
+void TeeworldsHtml::query()
 {
-    qDebug() << "TeeworldsHtml::refresh()\n";
     if(!m_pHTTP->hasPendingRequests())
         m_pHTTP->get(m_sURI);
 }
 
-void TeeworldsHtml::forceRefresh()
+void TeeworldsHtml::refresh()
 {
-    qDebug() << "TeeworldsHtml::forceRefresh()\n";
-    forceDisplay = true;
-    refresh();
+    query();
 }
 
 void TeeworldsHtml::requestFinished(int /*id*/, bool error)
 {
-    qDebug() << "TeeworldsHtml::requestFinished()";
     if(error)
     {
         emit errorEncountered(m_pHTTP->errorString());
@@ -94,8 +96,5 @@ void TeeworldsHtml::requestFinished(int /*id*/, bool error)
         m_iMaxPlayers = 0;
         m_sMap = QString();
         m_sMode = QString();
-        if(forceDisplay)
-            emit infosChanged(0, 0, QString(), QString());
-        forceDisplay = false;
     }
 }

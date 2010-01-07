@@ -16,13 +16,29 @@
 #include "Teeworlds.h"
 #include <QHostInfo>
 #include <QtDebug>
+#include <QTimer>
 
 TeeworldsServer::TeeworldsServer(const char *host, int port)
-  : m_bForceDisplay(false), m_sHost(host), m_iPort(port),
-    m_iNumPlayers(0), m_iMaxPlayers(0)
+  : m_sHost(host), m_iPort(port), m_iNumPlayers(0), m_iMaxPlayers(0)
 {
     m_pUdpSocket = new QUdpSocket(this);
+    {
+        int port = 5000;
+        while(!m_pUdpSocket->bind(QHostAddress::Any, port))
+        {
+            delete m_pUdpSocket; m_pUdpSocket = new QUdpSocket(this); // FIXME
+            port++;
+            if(port == 5040)
+                throw ServerError(m_pUdpSocket->errorString());
+        }
+        qDebug() << "TeeworldsServer: en ecoute sur le port " << port << "\n";
+    }
     connect(m_pUdpSocket, SIGNAL(readyRead()), this, SLOT(receiveData()));
+
+    QTimer *timer = new QTimer(this);
+    timer->setSingleShot(false);
+    connect(timer, SIGNAL(timeout()), this, SLOT(query()));
+    timer->start(30000);
 }
 
 unsigned int TeeworldsServer::numPlayers() const
@@ -45,14 +61,13 @@ QString TeeworldsServer::mode() const
     return m_sMode;
 }
 
-void TeeworldsServer::refresh()
+void TeeworldsServer::query()
 {
-    qDebug() << "TeeworldsServer::refresh()\n";
     QHostInfo ns = QHostInfo::fromName(m_sHost);
     if(!ns.addresses().isEmpty())
     {
         if(m_pUdpSocket->writeDatagram(
-            "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xffgief", 10,
+            "\xff\xff\xff\xff\xff\xff\xff\xff\xff\xffgief", 14,
             ns.addresses().first(), m_iPort) == -1)
         {
             emit errorEncountered(m_pUdpSocket->errorString());
@@ -62,11 +77,9 @@ void TeeworldsServer::refresh()
         emit errorEncountered(ns.errorString());
 }
 
-void TeeworldsServer::forceRefresh()
+void TeeworldsServer::refresh()
 {
-    qDebug() << "TeeworldsServer::forceRefresh()\n";
-    m_bForceDisplay = true;
-    refresh();
+    query();
 }
 
 void TeeworldsServer::receiveData()
@@ -91,9 +104,7 @@ void TeeworldsServer::receiveData()
             "\\0000([0-9]*)" // max players
             "\\0000");
         if(regexp.indexIn(datagram) == -1)
-        {
             emit errorEncountered("Réponse invalide");
-        }
 
         bool ok, changed = false;
         changed = confirm_assign(&m_iNumPlayers,
@@ -102,9 +113,7 @@ void TeeworldsServer::receiveData()
             (unsigned)regexp.cap(8).toInt(&ok, 10)) || changed;
         changed = confirm_assign(&m_sMap, regexp.cap(3)) || changed;
         changed = confirm_assign(&m_sMode, regexp.cap(4)) || changed;
-        if(changed || m_bForceDisplay)
+        if(changed)
             emit infosChanged(m_iNumPlayers, m_iMaxPlayers, m_sMap, m_sMode);
-
-        m_bForceDisplay = false;
     }
 }

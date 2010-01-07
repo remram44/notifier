@@ -18,12 +18,21 @@
 #include <QMenu>
 #include <QAction>
 #include <QApplication>
-#include <QTimer>
 #include <QStringList>
 #include <QtDebug>
 
-#include "TeeworldsHtml.h"
+#include "Teeworlds.h"
 #include "GameSpy.h"
+
+ServerError::ServerError(const QString error)
+  : w(error)
+{
+}
+
+const char *ServerError::what() const throw()
+{
+    return w.toLocal8Bit();
+}
 
 unsigned int Server::maxPlayers() const
 {
@@ -50,7 +59,7 @@ Notifier::Notifier(QWidget *pParent)
     {
         QAction *refreshAction = new QAction("Vérifier", this);
         connect(refreshAction, SIGNAL(triggered()),
-            this, SIGNAL(forceRefreshAll()));
+            this, SIGNAL(refreshAll()));
         trayMenu->addAction(refreshAction);
     }
     {
@@ -75,30 +84,21 @@ Notifier::Notifier(QWidget *pParent)
     {
         Server *tw = new TeeworldsHtml("yoshi.rez-gif.supelec.fr", 80, "/tw/");
         connect(this, SIGNAL(refreshAll()), tw, SLOT(refresh()));
-        connect(this, SIGNAL(forceRefreshAll()), tw, SLOT(forceRefresh()));
         connect(tw, SIGNAL(infosChanged(int, int, QString, QString)),
             this, SLOT(infosChanged(int, int, QString, QString)));
         connect(tw, SIGNAL(errorEncountered(QString)),
             this, SLOT(displayError(QString)));
-        m_aServers.insert(tw, "Teeworlds (yoshi)");
+        m_aServers.insert(tw, "Teeworlds (DM)");
     }
     {
         Server *ut = new GameSpyServer("mario.rez-gif.supelec.fr", 7787);
         connect(this, SIGNAL(refreshAll()), ut, SLOT(refresh()));
-        connect(this, SIGNAL(forceRefreshAll()), ut, SLOT(forceRefresh()));
         connect(ut, SIGNAL(infosChanged(int, int, QString, QString)),
             this, SLOT(infosChanged(int, int, QString, QString)));
         connect(ut, SIGNAL(errorEncountered(QString)),
             this, SLOT(displayError(QString)));
         m_aServers.insert(ut, "UT2004 (mario)");
     }
-
-    refreshAll();
-
-    QTimer *timer = new QTimer(this);
-    timer->setSingleShot(false);
-    connect(timer, SIGNAL(timeout()), this, SIGNAL(refreshAll()));
-    timer->start(30000);
 }
 
 // TODO : queue error messages to display all of them
@@ -111,6 +111,8 @@ void Notifier::displayError(QString error)
         QSystemTrayIcon::Warning);
 }
 
+// TODO : queue notifications to display all of them
+// (flush on refreshAll())
 void Notifier::infosChanged(int players, int max, QString map,
     QString mode)
 {
@@ -126,4 +128,5 @@ void Notifier::infosChanged(int players, int max, QString map,
         m_pTrayIcon->showMessage(name, QString("%1 joueurs sur %3 en %4")
             .arg(players).arg(map).arg(mode),
             QSystemTrayIcon::Information);
+    m_pBeep->play();
 }

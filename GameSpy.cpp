@@ -16,13 +16,29 @@
 #include "GameSpy.h"
 #include <QHostInfo>
 #include <QtDebug>
+#include <QTimer>
 
 GameSpyServer::GameSpyServer(const char *host, int port)
-  : m_bForceDisplay(false), m_sHost(host), m_iPort(port),
-    m_iNumPlayers(0), m_iMaxPlayers(0)
+  : m_sHost(host), m_iPort(port), m_iNumPlayers(0), m_iMaxPlayers(0)
 {
     m_pUdpSocket = new QUdpSocket(this);
+    {
+        int port = 5000;
+        while(!m_pUdpSocket->bind(QHostAddress::Any, port))
+        {
+            delete m_pUdpSocket; m_pUdpSocket = new QUdpSocket(this); // FIXME
+            port++;
+            if(port == 5040)
+                throw ServerError(m_pUdpSocket->errorString());
+        }
+        qDebug() << "GameSpyServer: en ecoute sur le port " << port << "\n";
+    }
     connect(m_pUdpSocket, SIGNAL(readyRead()), this, SLOT(receiveData()));
+
+    QTimer *timer = new QTimer(this);
+    timer->setSingleShot(false);
+    connect(timer, SIGNAL(timeout()), this, SLOT(query()));
+    timer->start(30000);
 }
 
 unsigned int GameSpyServer::numPlayers() const
@@ -45,9 +61,8 @@ QString GameSpyServer::mode() const
     return m_sMode;
 }
 
-void GameSpyServer::refresh()
+void GameSpyServer::query()
 {
-    qDebug() << "GameSpyServer::refresh()\n";
     QHostInfo ns = QHostInfo::fromName(m_sHost);
     if(!ns.addresses().isEmpty())
     {
@@ -61,11 +76,9 @@ void GameSpyServer::refresh()
         emit errorEncountered(ns.errorString());
 }
 
-void GameSpyServer::forceRefresh()
+void GameSpyServer::refresh()
 {
-    qDebug() << "GameSpyServer::forceRefresh()\n";
-    m_bForceDisplay = true;
-    refresh();
+    query();
 }
 
 void GameSpyServer::receiveData()
@@ -81,7 +94,7 @@ void GameSpyServer::receiveData()
             &sender, &senderPort);
 
         QMap<QString, QString> infos;
-        QRegExp regexp("\\(.+)\\");
+        QRegExp regexp("\\\\([^\\\\]+)\\\\");
         int pos = 0;
         while((pos = regexp.indexIn(datagram, pos)) != -1)
         {
@@ -102,9 +115,7 @@ void GameSpyServer::receiveData()
             (unsigned)infos["maxplayers"].toInt(&ok, 10)) || changed;
         changed = confirm_assign(&m_sMap, infos["mapname"]) || changed;
         changed = confirm_assign(&m_sMode, infos["gametype"]) || changed;
-        if(changed || m_bForceDisplay)
+        if(changed)
             emit infosChanged(m_iNumPlayers, m_iMaxPlayers, m_sMap, m_sMode);
-
-        m_bForceDisplay = false;
     }
 }

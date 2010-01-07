@@ -32,7 +32,6 @@ class TeeworldsHtml : public Server {
 private:
     QHttp *m_pHTTP;
     QString m_sURI;
-    bool forceDisplay;
 
     unsigned int m_iNumPlayers;
     unsigned int m_iMaxPlayers;
@@ -48,11 +47,11 @@ public:
     QString mode() const;
 
 private slots:
+    void query();
     void requestFinished(int id, bool error);
 
 public slots:
     void refresh();
-    void forceRefresh();
 
 signals:
     void infosChanged(int players, int max, QString map, QString mode);
