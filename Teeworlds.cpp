@@ -96,16 +96,21 @@ void TeeworldsServer::receiveData()
             &sender, &senderPort);
 
         QRegExp regexp("info([0-9]+\\.[0-9]+\\.[0-9]+)" // server version
-            "\\0000(.*)" // server name
-            "\\0000(\\w*)" // map name
-            "\\0000(\\w*)" // game type
-            "\\0000([0-9]*)" // flags
-            "\\0000([0-9]*)" // progression
-            "\\0000([0-9]*)" // player count
-            "\\0000([0-9]*)" // max players
-            "\\0000");
-        if(regexp.indexIn(datagram) == -1)
+            "\\x0000(.*)" // server name
+            "\\x0000(.*)" // map name
+            "\\x0000(.*)" // game type
+            "\\x0000([0-9]*)" // flags
+            "\\x0000([0-9]*)" // progression
+            "\\x0000([0-9]*)" // player count
+            "\\x0000([0-9]*)" // max players
+            "\\x0000");
+        // We use fromAscii because the implicit cast QByteArray -> QString
+        // will stop the string at the first null byte
+        if(regexp.indexIn(
+            QString::fromAscii(datagram.constData(), datagram.size())) == -1)
+        {
             emit errorEncountered("Réponse invalide");
+        }
 
         bool ok, changed = false;
         changed = confirm_assign(&m_iNumPlayers,
