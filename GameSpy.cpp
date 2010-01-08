@@ -29,7 +29,8 @@ GameSpyServer::GameSpyServer(const char *host, int port)
             delete m_pUdpSocket; m_pUdpSocket = new QUdpSocket(this); // FIXME
             port++;
             if(port == 5040)
-                throw ServerError(m_pUdpSocket->errorString());
+                throw ServerError(QString("GameSpyServer: "
+                    "impossible d'ecouter: ") + m_pUdpSocket->errorString());
         }
         qDebug() << "GameSpyServer: en ecoute sur le port " << port << "\n";
     }

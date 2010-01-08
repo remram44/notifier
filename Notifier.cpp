@@ -81,8 +81,8 @@ Notifier::Notifier(QWidget *pParent)
 
     m_pBeep->setLoops(1);
 
-    {
-        Server *tw = new TeeworldsHtml("yoshi.rez-gif.supelec.fr", 80, "/tw/");
+    try {
+        Server *tw = new TeeworldsServer("yoshi.rez-gif.supelec.fr", 8303);
         connect(this, SIGNAL(refreshAll()), tw, SLOT(refresh()));
         connect(tw, SIGNAL(infosChanged(int, int, QString, QString)),
             this, SLOT(infosChanged(int, int, QString, QString)));
@@ -90,7 +90,11 @@ Notifier::Notifier(QWidget *pParent)
             this, SLOT(displayError(QString)));
         m_aServers.insert(tw, "Teeworlds (DM)");
     }
+    catch(ServerError &e)
     {
+        displayError(e.what());
+    }
+    try {
         Server *ut = new GameSpyServer("mario.rez-gif.supelec.fr", 7787);
         connect(this, SIGNAL(refreshAll()), ut, SLOT(refresh()));
         connect(ut, SIGNAL(infosChanged(int, int, QString, QString)),
@@ -99,6 +103,10 @@ Notifier::Notifier(QWidget *pParent)
             this, SLOT(displayError(QString)));
         m_aServers.insert(ut, "UT2004 (mario)");
     }
+    catch(ServerError &e)
+    {
+        displayError(e.what());
+    }
 }
 
 // TODO : queue error messages to display all of them
@@ -106,8 +114,8 @@ Notifier::Notifier(QWidget *pParent)
 void Notifier::displayError(QString error)
 {
     Server *serv = qobject_cast<Server*>(sender());
-    QString name = serv?m_aServers[serv]:"(unknown origin)";
-    m_pTrayIcon->showMessage(name, QString("Erreur : ") + error,
+    QString name = serv?m_aServers[serv]:"(origine inconnue)";
+    m_pTrayIcon->showMessage(name, tr("Erreur : ") + error,
         QSystemTrayIcon::Warning);
 }
 
