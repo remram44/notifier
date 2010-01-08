@@ -18,6 +18,7 @@
 
 #include "Notifier.h"
 #include <QUdpSocket>
+#include <QTimer>
 
 /**
  * Teeworlds game server.
@@ -30,6 +31,7 @@ private:
     QUdpSocket *m_pUdpSocket;
     QString m_sHost;
     int m_iPort;
+    QTimer *m_pTimer;
 
     unsigned int m_iNumPlayers;
     unsigned int m_iMaxPlayers;

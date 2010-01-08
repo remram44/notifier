@@ -20,6 +20,7 @@
 #include <QSystemTrayIcon>
 #include <QSound>
 #include <QMap>
+#include <QTimer>
 
 #ifndef PREFIX
 #define PREFIX "/usr/local"
@@ -113,9 +114,19 @@ private:
 
     QMap<Server*, QString> m_aServers;
 
+    struct Notification {
+        QString title;
+        QString message;
+    };
+    QList<Notification> m_lNotifications;
+    QList<Notification> m_lErrors;
+    QTimer *m_pMessageTimer;
+
 private slots:
     void displayError(QString error);
     void infosChanged(int players, int max, QString map, QString mode);
+    void updateMessage();
+    void flushNotifications();
 
 public:
     Notifier(QWidget *pParent = NULL);

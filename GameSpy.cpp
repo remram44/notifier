@@ -16,7 +16,6 @@
 #include "GameSpy.h"
 #include <QHostInfo>
 #include <QtDebug>
-#include <QTimer>
 
 GameSpyServer::GameSpyServer(const char *host, int port)
   : m_sHost(host), m_iPort(port), m_iNumPlayers(0), m_iMaxPlayers(0)
@@ -36,10 +35,12 @@ GameSpyServer::GameSpyServer(const char *host, int port)
     }
     connect(m_pUdpSocket, SIGNAL(readyRead()), this, SLOT(receiveData()));
 
-    QTimer *timer = new QTimer(this);
-    timer->setSingleShot(false);
-    connect(timer, SIGNAL(timeout()), this, SLOT(query()));
-    timer->start(30000);
+    m_pTimer = new QTimer(this);
+    m_pTimer->setSingleShot(false);
+    connect(m_pTimer, SIGNAL(timeout()), this, SLOT(query()));
+    m_pTimer->start(30000);
+
+    query();
 }
 
 unsigned int GameSpyServer::numPlayers() const
@@ -80,6 +81,7 @@ void GameSpyServer::query()
 void GameSpyServer::refresh()
 {
     query();
+    m_pTimer->start();
 }
 
 void GameSpyServer::receiveData()

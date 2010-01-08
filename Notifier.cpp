@@ -81,6 +81,13 @@ Notifier::Notifier(QWidget *pParent)
 
     m_pBeep->setLoops(1);
 
+    connect(this, SIGNAL(refreshAll()), this, SLOT(flushNotifications()));
+
+    m_pMessageTimer = new QTimer(this);
+    connect(m_pMessageTimer, SIGNAL(timeout()), this, SLOT(updateMessage()));
+    m_pMessageTimer->setSingleShot(false);
+    m_pMessageTimer->setInterval(10000);
+
     try {
         Server *tw = new TeeworldsServer("yoshi.rez-gif.supelec.fr", 8303);
         connect(this, SIGNAL(refreshAll()), tw, SLOT(refresh()));
@@ -109,18 +116,19 @@ Notifier::Notifier(QWidget *pParent)
     }
 }
 
-// TODO : queue error messages to display all of them
-// (flush on refreshAll())
 void Notifier::displayError(QString error)
 {
     Server *serv = qobject_cast<Server*>(sender());
     QString name = serv?m_aServers[serv]:"(origine inconnue)";
-    m_pTrayIcon->showMessage(name, tr("Erreur : ") + error,
-        QSystemTrayIcon::Warning);
+    Notification n = {name, QString("Erreur : ") + error};
+    m_lErrors.append(n);
+    if(!m_pMessageTimer->isActive())
+    {
+        updateMessage();
+        m_pMessageTimer->start();
+    }
 }
 
-// TODO : queue notifications to display all of them
-// (flush on refreshAll())
 void Notifier::infosChanged(int players, int max, QString map,
     QString mode)
 {
@@ -129,12 +137,42 @@ void Notifier::infosChanged(int players, int max, QString map,
         return ;
     QString name = m_aServers[serv];
     if(max > 0)
-        m_pTrayIcon->showMessage(name, QString("%1/%2 joueurs sur %3 en %4")
-            .arg(players).arg(max).arg(map).arg(mode),
-            QSystemTrayIcon::Information);
+    {
+        Notification n = {name, QString("%1/%2 joueurs sur %3 en %4")
+            .arg(players).arg(max).arg(map).arg(mode)};
+        m_lNotifications.append(n);
+    }
     else
-        m_pTrayIcon->showMessage(name, QString("%1 joueurs sur %3 en %4")
-            .arg(players).arg(map).arg(mode),
+    {
+        Notification n = {name, QString("%1 joueurs sur %3 en %4")
+            .arg(players).arg(map).arg(mode)};
+        m_lNotifications.append(n);
+    }
+    if(!m_pMessageTimer->isActive())
+    {
+        updateMessage();
+        m_pMessageTimer->start();
+    }
+}
+
+void Notifier::updateMessage()
+{
+    if(!m_lErrors.isEmpty())
+    {
+        Notification n = m_lErrors.takeFirst();
+        m_pTrayIcon->showMessage(n.title, n.message, QSystemTrayIcon::Warning);
+    }
+    else if(!m_lNotifications.isEmpty())
+    {
+        Notification n = m_lNotifications.takeFirst();
+        m_pTrayIcon->showMessage(n.title, n.message,
             QSystemTrayIcon::Information);
-    m_pBeep->play();
+    }
+    else
+        m_pMessageTimer->stop();
+}
+
+void Notifier::flushNotifications()
+{
+
 }
