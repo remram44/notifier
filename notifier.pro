@@ -7,7 +7,7 @@ TARGET =
 DEPENDPATH += .
 INCLUDEPATH += .
 
-CONFIG += release console
+CONFIG += release
 DESTDIR = ./
 
 QT += network

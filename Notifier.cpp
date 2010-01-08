@@ -89,31 +89,35 @@ Notifier::Notifier(QWidget *pParent)
     m_pMessageTimer->setInterval(10000);
 
     try {
-        Server *tw = new TeeworldsServer("yoshi.rez-gif.supelec.fr", 8303);
-        connect(this, SIGNAL(refreshAll()), tw, SLOT(refresh()));
-        connect(tw, SIGNAL(infosChanged(int, int, QString, QString)),
-            this, SLOT(infosChanged(int, int, QString, QString)));
-        connect(tw, SIGNAL(errorEncountered(QString)),
-            this, SLOT(displayError(QString)));
-        m_aServers.insert(tw, "Teeworlds (DM)");
+        addServer(new TeeworldsServer("yoshi.rez-gif.supelec.fr", 8303),
+            "Teeworlds (DM)");
+        addServer(new TeeworldsServer("yoshi.rez-gif.supelec.fr", 8304),
+            "Teeworlds (DM)");
+        addServer(new TeeworldsServer("yoshi.rez-gif.supelec.fr", 8305),
+            "Teeworlds (DM)");
     }
     catch(ServerError &e)
     {
         displayError(e.what());
     }
     try {
-        Server *ut = new GameSpyServer("mario.rez-gif.supelec.fr", 7787);
-        connect(this, SIGNAL(refreshAll()), ut, SLOT(refresh()));
-        connect(ut, SIGNAL(infosChanged(int, int, QString, QString)),
-            this, SLOT(infosChanged(int, int, QString, QString)));
-        connect(ut, SIGNAL(errorEncountered(QString)),
-            this, SLOT(displayError(QString)));
-        m_aServers.insert(ut, "UT2004 (mario)");
+        addServer(new GameSpyServer("mario.rez-gif.supelec.fr", 7787),
+            "UT2004 (mario)");
     }
     catch(ServerError &e)
     {
         displayError(e.what());
     }
+}
+
+void Notifier::addServer(Server *serv, const QString &name)
+{
+    connect(this, SIGNAL(refreshAll()), serv, SLOT(refresh()));
+    connect(serv, SIGNAL(infosChanged(int, int, QString, QString)),
+        this, SLOT(infosChanged(int, int, QString, QString)));
+    connect(serv, SIGNAL(errorEncountered(QString)),
+        this, SLOT(displayError(QString)));
+    m_aServers.insert(serv, name);
 }
 
 void Notifier::displayError(QString error)

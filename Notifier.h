@@ -122,6 +122,9 @@ private:
     QList<Notification> m_lErrors;
     QTimer *m_pMessageTimer;
 
+private:
+    void addServer(Server *serv, const QString &name);
+
 private slots:
     void displayError(QString error);
     void infosChanged(int players, int max, QString map, QString mode);
