@@ -70,7 +70,7 @@ Notifier::Notifier(QWidget *pParent)
 
     m_pTrayIcon = new QSystemTrayIcon(this);
     m_pTrayIcon->setContextMenu(trayMenu);
-#ifdef __WIN32
+#ifdef __WIN32__
     m_pTrayIcon->setIcon(QIcon("icon.png"));
     m_pBeep = new QSound("beep.wav");
 #else
