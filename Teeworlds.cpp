@@ -101,10 +101,10 @@ void TeeworldsServer::receiveData()
             "\\x0000(.*)" // server name
             "\\x0000(.*)" // map name
             "\\x0000(.*)" // game type
-            "\\x0000([0-9]*)" // flags
-            "\\x0000([0-9]*)" // progression
-            "\\x0000([0-9]*)" // player count
-            "\\x0000([0-9]*)" // max players
+            "\\x0000(-?[0-9]*)"   // flags
+            "\\x0000(-?[0-9]*)" // progression
+            "\\x0000([0-9]*)"   // player count
+            "\\x0000([0-9]*)"   // max players
             "\\x0000");
         // We use fromAscii because the implicit cast QByteArray -> QString
         // will stop the string at the first null byte

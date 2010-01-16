@@ -114,10 +114,13 @@ void GameSpyServer::receiveData()
         bool ok, changed = false;
         changed = confirm_assign(&m_iNumPlayers,
             (unsigned)infos["numplayers"].toInt(&ok, 10)) || changed;
-        changed = confirm_assign(&m_iMaxPlayers,
-            (unsigned)infos["maxplayers"].toInt(&ok, 10)) || changed;
-        changed = confirm_assign(&m_sMap, infos["mapname"]) || changed;
-        changed = confirm_assign(&m_sMode, infos["gametype"]) || changed;
+        if(infos["numplayers"] != "0")
+            changed = confirm_assign(&m_iMaxPlayers,
+                (unsigned)infos["maxplayers"].toInt(&ok, 10)) || changed;
+        if(infos["mapname"] != "")
+            changed = confirm_assign(&m_sMap, infos["mapname"]) || changed;
+        if(infos["gametype"] != "")
+            changed = confirm_assign(&m_sMode, infos["gametype"]) || changed;
         if(changed)
             emit infosChanged(m_iNumPlayers, m_iMaxPlayers, m_sMap, m_sMode);
     }

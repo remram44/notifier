@@ -92,9 +92,9 @@ Notifier::Notifier(QWidget *pParent)
         addServer(new TeeworldsServer("yoshi.rez-gif.supelec.fr", 8303),
             "Teeworlds (DM)");
         addServer(new TeeworldsServer("yoshi.rez-gif.supelec.fr", 8304),
-            "Teeworlds (DM)");
+            "Teeworlds (TDM)");
         addServer(new TeeworldsServer("yoshi.rez-gif.supelec.fr", 8305),
-            "Teeworlds (DM)");
+            "Teeworlds (CTF)");
     }
     catch(ServerError &e)
     {
