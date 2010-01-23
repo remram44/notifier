@@ -121,6 +121,8 @@ private:
     QList<Notification> m_lNotifications;
     QList<Notification> m_lErrors;
     QTimer *m_pMessageTimer;
+    QIcon m_IconEmpty;
+    QIcon m_IconPlayers;
 
 private:
     void addServer(Server *serv, const QString &name);
@@ -130,6 +132,9 @@ private slots:
     void infosChanged(int players, int max, QString map, QString mode);
     void updateMessage();
     void flushNotifications();
+    void updateIcon();
+    void tellAgain();
+    void iconActivated(QSystemTrayIcon::ActivationReason reason);
 
 public:
     Notifier(QWidget *pParent = NULL);

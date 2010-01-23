@@ -63,6 +63,13 @@ Notifier::Notifier(QWidget *pParent)
         trayMenu->addAction(refreshAction);
     }
     {
+        QAction *tellMe = new QAction("Dis-moi à nouveau", this);
+        connect(tellMe, SIGNAL(triggered()),
+            this, SLOT(tellAgain()));
+        trayMenu->addAction(tellMe);
+    }
+    trayMenu->addSeparator();
+    {
         QAction *quitAction = new QAction("Quitter", this);
         connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
         trayMenu->addAction(quitAction);
@@ -70,13 +77,18 @@ Notifier::Notifier(QWidget *pParent)
 
     m_pTrayIcon = new QSystemTrayIcon(this);
     m_pTrayIcon->setContextMenu(trayMenu);
+    connect(m_pTrayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+        this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 #ifdef __WIN32__
-    m_pTrayIcon->setIcon(QIcon("icon.png"));
+    m_IconEmpty = QIcon("icon.png");
+    m_IconPlayers = QIcon("icon2.png");
     m_pBeep = new QSound("beep.wav");
 #else
-    m_pTrayIcon->setIcon(QIcon(PREFIX "/share/notifier/icon.png"));
+    m_IconEmpty = QIcon(PREFIX "/share/notifier/icon.png");
+    m_IconPlayers = QIcon(PREFIX "/share/notifier/icon2.png");
     m_pBeep = new QSound(PREFIX "/share/notifier/beep.wab");
 #endif
+    m_pTrayIcon->setIcon(m_IconEmpty);
     m_pTrayIcon->show();
 
     m_pBeep->setLoops(1);
@@ -127,10 +139,7 @@ void Notifier::displayError(QString error)
     Notification n = {name, QString("Erreur : ") + error};
     m_lErrors.append(n);
     if(!m_pMessageTimer->isActive())
-    {
         updateMessage();
-        m_pMessageTimer->start();
-    }
 }
 
 void Notifier::infosChanged(int players, int max, QString map,
@@ -139,6 +148,7 @@ void Notifier::infosChanged(int players, int max, QString map,
     Server *serv = qobject_cast<Server*>(sender());
     if(!serv)
         return ;
+    // Queues the notification to be displayed later
     QString name = m_aServers[serv];
     if(max > 0)
     {
@@ -153,10 +163,10 @@ void Notifier::infosChanged(int players, int max, QString map,
         m_lNotifications.append(n);
     }
     if(!m_pMessageTimer->isActive())
-    {
         updateMessage();
-        m_pMessageTimer->start();
-    }
+
+    // Updates the icon
+    updateIcon();
 }
 
 void Notifier::updateMessage()
@@ -173,10 +183,78 @@ void Notifier::updateMessage()
             QSystemTrayIcon::Information);
     }
     else
+    {
         m_pMessageTimer->stop();
+        return ;
+    }
+    m_pMessageTimer->start();
 }
 
 void Notifier::flushNotifications()
 {
+    m_lNotifications.clear();
+    m_lErrors.clear();
+    m_pMessageTimer->stop();
+}
 
+void Notifier::updateIcon()
+{
+    bool players = false;
+    QMap<Server*, QString>::const_iterator i = m_aServers.constBegin();
+    while(i != m_aServers.constEnd())
+    {
+        if(i.key()->numPlayers() > 0)
+        {
+            players = true;
+            break;
+        }
+        ++i;
+    }
+    if(players)
+        m_pTrayIcon->setIcon(m_IconPlayers);
+    else
+        m_pTrayIcon->setIcon(m_IconEmpty);
+}
+
+void Notifier::tellAgain()
+{
+    flushNotifications();
+
+    int p;
+    // Servers with people playing, then the others
+    for(p = 0; p <= 1; p++)
+    {
+        QMap<Server*, QString>::const_iterator i = m_aServers.constBegin();
+        for(; i != m_aServers.constEnd(); ++i)
+        {
+            if( (p == 0 && i.key()->numPlayers() == 0)
+             || (p == 1 && i.key()->numPlayers() > 0) )
+                continue;
+            else if(i.key()->maxPlayers() > 0)
+            {
+                Notification n = {i.value(),
+                    QString("%1/%2 joueurs sur %3 en %4")
+                    .arg(i.key()->numPlayers()).arg(i.key()->maxPlayers())
+                    .arg(i.key()->map()).arg(i.key()->mode())};
+                m_lNotifications.append(n);
+            }
+            else
+            {
+                Notification n = {i.value(),
+                    QString("%1 joueurs sur %3 en %4")
+                    .arg(i.key()->numPlayers()).arg(i.key()->maxPlayers())
+                    .arg(i.key()->map()).arg(i.key()->mode())};
+                m_lNotifications.append(n);
+            }
+        }
+    }
+
+    if(!m_pMessageTimer->isActive())
+        updateMessage();
+}
+
+void Notifier::iconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    if(reason == QSystemTrayIcon::DoubleClick)
+        tellAgain();
 }
