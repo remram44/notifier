@@ -242,7 +242,7 @@ void Notifier::tellAgain()
             {
                 Notification n = {i.value(),
                     QString("%1 joueurs sur %3 en %4")
-                    .arg(i.key()->numPlayers()).arg(i.key()->maxPlayers())
+                    .arg(i.key()->numPlayers())
                     .arg(i.key()->map()).arg(i.key()->mode())};
                 m_lNotifications.append(n);
             }
