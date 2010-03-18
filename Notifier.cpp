@@ -23,6 +23,7 @@
 
 #include "Teeworlds.h"
 #include "GameSpy.h"
+#include "Urbanterror.h"
 
 ServerError::ServerError(const QString error)
   : w(error)
@@ -115,6 +116,8 @@ Notifier::Notifier(QWidget *pParent)
     try {
         addServer(new GameSpyServer("mario.rez-gif.supelec.fr", 7787),
             "UT2004 (mario)");
+        addServer(new UrbanterrorServer("mario.rez-gif.supelec.fr", 27960),
+            "Urbanterror (mario)");
     }
     catch(ServerError &e)
     {
