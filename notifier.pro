@@ -15,3 +15,5 @@ QT += network
 # Input
 HEADERS = Notifier.h Teeworlds.h GameSpy.h Urbanterror.h TeeworldsHtml.h
 SOURCES = Notifier.cpp main.cpp Teeworlds.cpp GameSpy.cpp Urbanterror.cpp TeeworldsHtml.cpp
+
+RC_FILE = notifier.rc
