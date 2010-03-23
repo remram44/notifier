@@ -112,6 +112,7 @@ void GameSpyServer::receiveData()
         }
 
         bool ok, changed = false;
+        unsigned int old_players = m_iNumPlayers;
         changed = confirm_assign(&m_iNumPlayers,
             (unsigned)infos["numplayers"].toInt(&ok, 10)) || changed;
         if(infos["numplayers"] != "0")
@@ -122,6 +123,7 @@ void GameSpyServer::receiveData()
         if(infos["gametype"] != "")
             changed = confirm_assign(&m_sMode, infos["gametype"]) || changed;
         if(changed)
-            emit infosChanged(m_iNumPlayers, m_iMaxPlayers, m_sMap, m_sMode);
+            emit infosChanged(m_iNumPlayers, m_iMaxPlayers, m_sMap, m_sMode,
+                old_players == 0 && m_iNumPlayers > 0);
     }
 }

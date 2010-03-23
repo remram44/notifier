@@ -90,9 +90,13 @@ public slots:
 signals:
     /**
      * Signal emitted when the informations have changed.
+     *
+     * @param gamestarted Boolean indicating whether the game just started, ie
+     * there was no player before and there are players now. It should therefore
+     * never be set two consecutive times.
      */
     void infosChanged(unsigned int players, unsigned int max, QString map,
-        QString mode);
+        QString mode, bool gamestarted);
 
     /**
      * Signal emitted on errors.
@@ -129,7 +133,8 @@ private:
 
 private slots:
     void displayError(QString error);
-    void infosChanged(int players, int max, QString map, QString mode);
+    void infosChanged(int players, int max, QString map, QString mode,
+        bool gamestarted);
     void updateMessage();
     void flushNotifications();
     void updateIcon();

@@ -128,8 +128,8 @@ Notifier::Notifier(QWidget *pParent)
 void Notifier::addServer(Server *serv, const QString &name)
 {
     connect(this, SIGNAL(refreshAll()), serv, SLOT(refresh()));
-    connect(serv, SIGNAL(infosChanged(int, int, QString, QString)),
-        this, SLOT(infosChanged(int, int, QString, QString)));
+    connect(serv, SIGNAL(infosChanged(int, int, QString, QString, bool)),
+        this, SLOT(infosChanged(int, int, QString, QString, bool)));
     connect(serv, SIGNAL(errorEncountered(QString)),
         this, SLOT(displayError(QString)));
     m_aServers.insert(serv, name);
@@ -145,8 +145,8 @@ void Notifier::displayError(QString error)
         updateMessage();
 }
 
-void Notifier::infosChanged(int players, int max, QString map,
-    QString mode)
+void Notifier::infosChanged(int players, int max, QString map, QString mode,
+    bool gamestarted)
 {
     Server *serv = qobject_cast<Server*>(sender());
     if(!serv)
@@ -167,6 +167,10 @@ void Notifier::infosChanged(int players, int max, QString map,
     }
     if(!m_pMessageTimer->isActive())
         updateMessage();
+
+    // Plays a sound
+    if(gamestarted)
+        m_pBeep->play();
 
     // Updates the icon
     updateIcon();

@@ -115,6 +115,7 @@ void TeeworldsServer::receiveData()
         }
 
         bool ok, changed = false;
+        unsigned int old_players = m_iNumPlayers;
         changed = confirm_assign(&m_iNumPlayers,
             (unsigned)regexp.cap(7).toInt(&ok, 10)) || changed;
         changed = confirm_assign(&m_iMaxPlayers,
@@ -122,6 +123,7 @@ void TeeworldsServer::receiveData()
         changed = confirm_assign(&m_sMap, regexp.cap(3)) || changed;
         changed = confirm_assign(&m_sMode, regexp.cap(4)) || changed;
         if(changed)
-            emit infosChanged(m_iNumPlayers, m_iMaxPlayers, m_sMap, m_sMode);
+            emit infosChanged(m_iNumPlayers, m_iMaxPlayers, m_sMap, m_sMode,
+                old_players == 0 && m_iNumPlayers > 0);
     }
 }

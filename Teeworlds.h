@@ -54,7 +54,8 @@ public slots:
     void refresh();
 
 signals:
-    void infosChanged(int players, int max, QString map, QString mode);
+    void infosChanged(int players, int max, QString map, QString mode,
+        bool gamestarted);
     void errorEncountered(QString text);
 
 };

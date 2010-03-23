@@ -81,14 +81,15 @@ void TeeworldsHtml::requestFinished(int /*id*/, bool error)
             int max, players = regexp.cap(2).toInt(&ok, 10);
             if(ok)
                 max = regexp.cap(3).toInt(&ok, 10);
-            if(ok && players > 0)
+            if(ok)
             {
+                unsigned int old_players = m_iNumPlayers;
                 m_iNumPlayers = players;
                 m_iMaxPlayers = max;
                 m_sMap = regexp.cap(4);
                 m_sMode = regexp.cap(1);
                 emit infosChanged(m_iNumPlayers, m_iMaxPlayers, m_sMap,
-                    m_sMode);
+                    m_sMode, old_players == 0);
             }
             pos += regexp.matchedLength();
         }
