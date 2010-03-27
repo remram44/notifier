@@ -1,0 +1,16 @@
+  Notifier -- Programme indiquant la présence de joueurs sur des serveurs de jeu
+
+  Notifier est un petit programme se plaçant dans la zone de notification de
+votre système, et vous indiquant (via un son, le changement de couleur de
+l'icône et des info-bulles) quand des joueurs sont présents sur l'un des
+serveurs de jeu surveillés.
+  Pour le moment, Notifier est configuré (au niveau du code-source) pour
+surveiller les serveurs de Supélec Rézo. Une future version permettra de choisir
+les serveurs que l'on désire.
+
+  Choses à faire :
+   * Afficher toutes les infos dans une seule bulle, plutôt qu'ouvrir une
+info-bulle par évènement.
+   * Remplacer les bulles par des popups « à la MSN », afin de contourner
+certaines limitations et bugs de Windows.
+   * Ajout du protocole Mumble
