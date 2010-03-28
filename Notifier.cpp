@@ -24,6 +24,7 @@
 #include "Teeworlds.h"
 #include "GameSpy.h"
 #include "Urbanterror.h"
+#include "Mumble.h"
 
 ServerError::ServerError(const QString error)
   : w(error)
@@ -108,16 +109,12 @@ Notifier::Notifier(QWidget *pParent)
             "Teeworlds (TDM)");
         addServer(new TeeworldsServer("yoshi.rez-gif.supelec.fr", 8305),
             "Teeworlds (CTF)");
-    }
-    catch(ServerError &e)
-    {
-        displayError(e.what());
-    }
-    try {
         addServer(new GameSpyServer("mario.rez-gif.supelec.fr", 7787),
             "UT2004 (mario)");
         addServer(new UrbanterrorServer("mario.rez-gif.supelec.fr", 27960),
             "Urbanterror (mario)");
+        addServer(new MumbleServer("mario.rez-gif.supelec.fr", 64738),
+            "Mumble (mario)");
     }
     catch(ServerError &e)
     {
