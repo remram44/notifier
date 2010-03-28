@@ -142,6 +142,77 @@ void Notifier::displayError(QString error)
         updateMessage();
 }
 
+void Notifier::appendNotification(QString name, unsigned int players,
+    unsigned int max, QString map, QString mode)
+{
+    if(map == "")
+    {
+        if(mode == "")
+        {
+            if(max > 0)
+            {
+                Notification n = {name, QString("%1/%2 joueurs")
+                    .arg(players).arg(max)};
+                m_lNotifications.append(n);
+            }
+            else
+            {
+                Notification n = {name, QString("%1 joueurs")
+                    .arg(players)};
+                m_lNotifications.append(n);
+            }
+        }
+        else
+        {
+            if(max > 0)
+            {
+                Notification n = {name, QString("%1/%2 joueurs en %4")
+                    .arg(players).arg(max).arg(mode)};
+                m_lNotifications.append(n);
+            }
+            else
+            {
+                Notification n = {name, QString("%1 joueurs en %4")
+                    .arg(players).arg(mode)};
+                m_lNotifications.append(n);
+            }
+        }
+    }
+    else
+    {
+        if(mode == "")
+        {
+            if(max > 0)
+            {
+                Notification n = {name, QString("%1/%2 joueurs sur %3")
+                    .arg(players).arg(max).arg(map)};
+                m_lNotifications.append(n);
+            }
+            else
+            {
+                Notification n = {name, QString("%1 joueurs sur %3")
+                    .arg(players).arg(map)};
+                m_lNotifications.append(n);
+            }
+        }
+        else
+        {
+            if(max > 0)
+            {
+                Notification n = {name, QString("%1/%2 joueurs sur %3 en %4")
+                    .arg(players).arg(max).arg(map).arg(mode)};
+                m_lNotifications.append(n);
+            }
+            else
+            {
+                Notification n = {name, QString("%1 joueurs sur %3 en %4")
+                    .arg(players).arg(map).arg(mode)};
+                m_lNotifications.append(n);
+            }
+        }
+    }
+}
+
 void Notifier::infosChanged(int players, int max, QString map, QString mode,
     bool gamestarted)
 {
@@ -150,18 +221,8 @@ void Notifier::infosChanged(int players, int max, QString map, QString mode,
         return ;
     // Queues the notification to be displayed later
     QString name = m_aServers[serv];
-    if(max > 0)
-    {
-        Notification n = {name, QString("%1/%2 joueurs sur %3 en %4")
-            .arg(players).arg(max).arg(map).arg(mode)};
-        m_lNotifications.append(n);
-    }
-    else
-    {
-        Notification n = {name, QString("%1 joueurs sur %3 en %4")
-            .arg(players).arg(map).arg(mode)};
-        m_lNotifications.append(n);
-    }
+    appendNotification(name, players, max, map, mode);
+
     if(!m_pMessageTimer->isActive())
         updateMessage();
 
@@ -234,22 +295,9 @@ void Notifier::tellAgain()
             if( (p == 0 && i.key()->numPlayers() == 0)
              || (p == 1 && i.key()->numPlayers() > 0) )
                 continue;
-            else if(i.key()->maxPlayers() > 0)
-            {
-                Notification n = {i.value(),
-                    QString("%1/%2 joueurs sur %3 en %4")
-                    .arg(i.key()->numPlayers()).arg(i.key()->maxPlayers())
-                    .arg(i.key()->map()).arg(i.key()->mode())};
-                m_lNotifications.append(n);
-            }
             else
-            {
-                Notification n = {i.value(),
-                    QString("%1 joueurs sur %3 en %4")
-                    .arg(i.key()->numPlayers())
-                    .arg(i.key()->map()).arg(i.key()->mode())};
-                m_lNotifications.append(n);
-            }
+                appendNotification(i.value(), i.key()->numPlayers(),
+                    i.key()->maxPlayers(), i.key()->map(), i.key()->mode());
         }
     }
 

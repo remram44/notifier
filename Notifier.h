@@ -130,6 +130,8 @@ private:
 
 private:
     void addServer(Server *serv, const QString &name);
+    void appendNotification(QString name, unsigned int players,
+        unsigned int max, QString map, QString mode);
 
 private slots:
     void displayError(QString error);
