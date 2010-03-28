@@ -29,9 +29,9 @@ GameSpyServer::GameSpyServer(const char *host, int port)
             port++;
             if(port == 5040)
                 throw ServerError(QString("GameSpyServer: "
-                    "impossible d'ecouter: ") + m_pUdpSocket->errorString());
+                    "can't listen: ") + m_pUdpSocket->errorString());
         }
-        qDebug() << "GameSpyServer: en ecoute sur le port " << port << "\n";
+        qDebug() << tr("GameSpyServer: listening on port %1").arg(port);
     }
     connect(m_pUdpSocket, SIGNAL(readyRead()), this, SLOT(receiveData()));
 

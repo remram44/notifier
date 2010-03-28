@@ -17,3 +17,6 @@ HEADERS = Notifier.h Teeworlds.h GameSpy.h Urbanterror.h Mumble.h TeeworldsHtml.
 SOURCES = Notifier.cpp main.cpp Teeworlds.cpp GameSpy.cpp Urbanterror.cpp Mumble.cpp TeeworldsHtml.cpp
 
 RC_FILE = notifier.rc
+
+TRANSLATIONS = notifier_fr.ts
+CODECFORTR = ISO-8859-1

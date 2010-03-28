@@ -54,25 +54,25 @@ QString Server::mode() const
 Notifier::Notifier(QWidget *pParent)
   : QWidget::QWidget(pParent)
 {
-    setWindowTitle("Notifier");
+    setWindowTitle(tr("Notifier"));
 
     // System tray icon creation
     QMenu *trayMenu = new QMenu(this);
     {
-        QAction *refreshAction = new QAction("Vérifier", this);
+        QAction *refreshAction = new QAction(tr("Check"), this);
         connect(refreshAction, SIGNAL(triggered()),
             this, SIGNAL(refreshAll()));
         trayMenu->addAction(refreshAction);
     }
     {
-        QAction *tellMe = new QAction("Dis-moi à nouveau", this);
+        QAction *tellMe = new QAction(tr("Tell me again"), this);
         connect(tellMe, SIGNAL(triggered()),
             this, SLOT(tellAgain()));
         trayMenu->addAction(tellMe);
     }
     trayMenu->addSeparator();
     {
-        QAction *quitAction = new QAction("Quitter", this);
+        QAction *quitAction = new QAction(tr("Quit"), this);
         connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
         trayMenu->addAction(quitAction);
     }
@@ -135,8 +135,8 @@ void Notifier::addServer(Server *serv, const QString &name)
 void Notifier::displayError(QString error)
 {
     Server *serv = qobject_cast<Server*>(sender());
-    QString name = serv?m_aServers[serv]:"(origine inconnue)";
-    Notification n = {name, QString("Erreur : ") + error};
+    QString name = serv?m_aServers[serv]:tr("(unknown origin)");
+    Notification n = {name, tr("Error: ") + error};
     m_lErrors.append(n);
     if(!m_pMessageTimer->isActive())
         updateMessage();
@@ -151,17 +151,17 @@ void Notifier::appendNotification(QString name, unsigned int players,
         if(mode.isEmpty())
         {
             if(max > 0)
-                text = QString("%1/%2 joueurs").arg(players).arg(max);
+                text = tr("%1/%2 players").arg(players).arg(max);
             else
-                text = QString("%1 joueurs").arg(players);
+                text = tr("%1 players").arg(players);
         }
         else
         {
             if(max > 0)
-                text = QString("%1/%2 joueurs en %4")
+                text = tr("%1/%2 players in %4")
                     .arg(players).arg(max).arg(mode);
             else
-                text = QString("%1 joueurs en %4").arg(players).arg(mode);
+                text = tr("%1 players in %4").arg(players).arg(mode);
         }
     }
     else
@@ -169,18 +169,17 @@ void Notifier::appendNotification(QString name, unsigned int players,
         if(mode.isEmpty())
         {
             if(max > 0)
-                text = QString("%1/%2 joueurs sur %3")
-                    .arg(players).arg(max).arg(map);
+                text = tr("%1/%2 players on %3").arg(players).arg(max).arg(map);
             else
-                text = QString("%1 joueurs sur %3").arg(players).arg(map);
+                text = tr("%1 players on %3").arg(players).arg(map);
         }
         else
         {
             if(max > 0)
-                text = QString("%1/%2 joueurs sur %3 en %4")
+                text = tr("%1/%2 players on %3 in %4")
                     .arg(players).arg(max).arg(map).arg(mode);
             else
-                text = QString("%1 joueurs sur %3 en %4")
+                text = tr("%1 players on %3 in %4")
                     .arg(players).arg(map).arg(mode);
         }
     }

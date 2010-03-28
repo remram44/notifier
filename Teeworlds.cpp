@@ -28,10 +28,10 @@ TeeworldsServer::TeeworldsServer(const char *host, int port)
             delete m_pUdpSocket; m_pUdpSocket = new QUdpSocket(this); // FIXME
             port++;
             if(port == 5040)
-                throw ServerError(QString("GameSpyServer: "
-                    "impossible d'ecouter: ") + m_pUdpSocket->errorString());
+                throw ServerError(tr("TeeworldsServer: "
+                    "can't listen: ") + m_pUdpSocket->errorString());
         }
-        qDebug() << "TeeworldsServer: en ecoute sur le port " << port << "\n";
+        qDebug() << tr("TeeworldsServer: listening on port %1").arg(port);
     }
     connect(m_pUdpSocket, SIGNAL(readyRead()), this, SLOT(receiveData()));
 
@@ -111,7 +111,7 @@ void TeeworldsServer::receiveData()
         if(regexp.indexIn(
             QString::fromAscii(datagram.constData(), datagram.size())) == -1)
         {
-            emit errorEncountered("Réponse invalide");
+            emit errorEncountered(tr("Invalid answer"));
         }
 
         bool ok, changed = false;

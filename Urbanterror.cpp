@@ -26,28 +26,28 @@ static QString gametype(const QString &num)
     switch(type)
     {
     case 0:
-        return "FreeForAll";
+        return QObject::tr("Free for All");
         break;
     case 3:
-        return "TeamDeathMatch";
+        return QObject::tr("Team DeathMatch");
         break;
     case 4:
-        return "Team Survivor";
+        return QObject::tr("Team Survivor");
         break;
     case 5:
-        return "Follow the Leader";
+        return QObject::tr("Follow the Leader");
         break;
     case 6:
-        return "Capture and Hold";
+        return QObject::tr("Capture and Hold");
         break;
     case 7:
-        return "Capture the Flag";
+        return QObject::tr("Capture the Flag");
         break;
     case 8:
-        return "Bombmode";
+        return QObject::tr("Bombmode");
         break;
     default:
-        return QString("Mode %1").arg(num);
+        return QObject::tr("Mode %1").arg(num);
         break;
     }
 }
@@ -63,10 +63,10 @@ UrbanterrorServer::UrbanterrorServer(const char *host, int port)
             delete m_pUdpSocket; m_pUdpSocket = new QUdpSocket(this); // FIXME
             port++;
             if(port == 5040)
-                throw ServerError(QString("UrbanterrorServer: "
-                    "impossible d'ecouter: ") + m_pUdpSocket->errorString());
+                throw ServerError(tr("UrbanterrorServer: "
+                    "can't listen: ") + m_pUdpSocket->errorString());
         }
-        qDebug() << "UrbanterrorServer: en ecoute sur le port " << port << "\n";
+        qDebug() << tr("UrbanterrorServer: listening on port %1").arg(port);
     }
     connect(m_pUdpSocket, SIGNAL(readyRead()), this, SLOT(receiveData()));
 
@@ -133,8 +133,8 @@ void UrbanterrorServer::receiveData()
     
         if(datagram.left(19) != "\xFF\xFF\xFF\xFFstatusResponse\x0A")
         {
-            emit errorEncountered("UrbanterrorServer: impossible de comprendre "
-                "les données reçues");
+            emit errorEncountered(tr("UrbanterrorServer: failure to understand "
+                "received data"));
             return ;
         }
 
