@@ -164,12 +164,12 @@ void UrbanterrorServer::receiveData()
         bool ok, changed = false;
         unsigned int old_players = m_iNumPlayers;
         changed = confirm_assign(&m_iNumPlayers, (unsigned)players) || changed;
-        if(infos["sv_maxclients"] != "")
+        if(!infos["sv_maxclients"].isEmpty())
             changed = confirm_assign(&m_iMaxPlayers,
                 (unsigned)infos["sv_maxclients"].toInt(&ok, 10)) || changed;
-        if(infos["mapname"] != "")
+        if(!infos["mapname"].isEmpty())
             changed = confirm_assign(&m_sMap, infos["mapname"]) || changed;
-        if(infos["g_gametype"] != "")
+        if(!infos["g_gametype"].isEmpty())
             changed = confirm_assign(&m_sMode, gametype(infos["g_gametype"]))
                 || changed;
         if(changed)

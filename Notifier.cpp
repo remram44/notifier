@@ -145,72 +145,47 @@ void Notifier::displayError(QString error)
 void Notifier::appendNotification(QString name, unsigned int players,
     unsigned int max, QString map, QString mode)
 {
-    if(map == "")
+    QString text;
+    if(map.isEmpty())
     {
-        if(mode == "")
+        if(mode.isEmpty())
         {
             if(max > 0)
-            {
-                Notification n = {name, QString("%1/%2 joueurs")
-                    .arg(players).arg(max)};
-                m_lNotifications.append(n);
-            }
+                text = QString("%1/%2 joueurs").arg(players).arg(max);
             else
-            {
-                Notification n = {name, QString("%1 joueurs")
-                    .arg(players)};
-                m_lNotifications.append(n);
-            }
+                text = QString("%1 joueurs").arg(players);
         }
         else
         {
             if(max > 0)
-            {
-                Notification n = {name, QString("%1/%2 joueurs en %4")
-                    .arg(players).arg(max).arg(mode)};
-                m_lNotifications.append(n);
-            }
+                text = QString("%1/%2 joueurs en %4")
+                    .arg(players).arg(max).arg(mode);
             else
-            {
-                Notification n = {name, QString("%1 joueurs en %4")
-                    .arg(players).arg(mode)};
-                m_lNotifications.append(n);
-            }
+                text = QString("%1 joueurs en %4").arg(players).arg(mode);
         }
     }
     else
     {
-        if(mode == "")
+        if(mode.isEmpty())
         {
             if(max > 0)
-            {
-                Notification n = {name, QString("%1/%2 joueurs sur %3")
-                    .arg(players).arg(max).arg(map)};
-                m_lNotifications.append(n);
-            }
+                text = QString("%1/%2 joueurs sur %3")
+                    .arg(players).arg(max).arg(map);
             else
-            {
-                Notification n = {name, QString("%1 joueurs sur %3")
-                    .arg(players).arg(map)};
-                m_lNotifications.append(n);
-            }
+                text = QString("%1 joueurs sur %3").arg(players).arg(map);
         }
         else
         {
             if(max > 0)
-            {
-                Notification n = {name, QString("%1/%2 joueurs sur %3 en %4")
-                    .arg(players).arg(max).arg(map).arg(mode)};
-                m_lNotifications.append(n);
-            }
+                text = QString("%1/%2 joueurs sur %3 en %4")
+                    .arg(players).arg(max).arg(map).arg(mode);
             else
-            {
-                Notification n = {name, QString("%1 joueurs sur %3 en %4")
-                    .arg(players).arg(map).arg(mode)};
-                m_lNotifications.append(n);
-            }
+                text = QString("%1 joueurs sur %3 en %4")
+                    .arg(players).arg(map).arg(mode);
         }
     }
+    Notification n = {name, text};
+    m_lNotifications.append(n);
 }
 
 void Notifier::infosChanged(int players, int max, QString map, QString mode,

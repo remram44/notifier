@@ -118,9 +118,9 @@ void GameSpyServer::receiveData()
         if(infos["numplayers"] != "0")
             changed = confirm_assign(&m_iMaxPlayers,
                 (unsigned)infos["maxplayers"].toInt(&ok, 10)) || changed;
-        if(infos["mapname"] != "")
+        if(!infos["mapname"].isEmpty())
             changed = confirm_assign(&m_sMap, infos["mapname"]) || changed;
-        if(infos["gametype"] != "")
+        if(!infos["gametype"].isEmpty())
             changed = confirm_assign(&m_sMode, infos["gametype"]) || changed;
         if(changed)
             emit infosChanged(m_iNumPlayers, m_iMaxPlayers, m_sMap, m_sMode,
