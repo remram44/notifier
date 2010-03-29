@@ -12,7 +12,7 @@ mkdir -p debian/notifier/usr/share/notifier
 
 qmake && make && lrelease notifier.pro
 cp notifier debian/notifier/usr/bin/
-cp beep.wav icon.png icon2.png notifier_fr.qm debian/notifier/usr/share/notifier/
+cp beep.wav icon.png icon2.png notifier_fr.qm default.conf debian/notifier/usr/share/notifier/
 
 cd debian/notifier
 rm -f DEBIAN/md5sums
