@@ -59,6 +59,9 @@ Notifier::Notifier(QWidget *pParent)
 {
     setWindowTitle(tr("Notifier"));
 
+    // Configuration dialog
+    m_pConfigDialog = new ConfigDialog(this);
+
     // System tray icon creation
     QMenu *trayMenu = new QMenu(this);
     {
@@ -72,6 +75,12 @@ Notifier::Notifier(QWidget *pParent)
         connect(tellMe, SIGNAL(triggered()),
             this, SLOT(tellAgain()));
         trayMenu->addAction(tellMe);
+    }
+    {
+        QAction *config = new QAction(tr("Configure servers"), this);
+        connect(config, SIGNAL(triggered()),
+            m_pConfigDialog, SLOT(show()));
+        trayMenu->addAction(config);
     }
     trayMenu->addSeparator();
     {

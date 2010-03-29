@@ -7,6 +7,8 @@ int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
 
+    app.setQuitOnLastWindowClosed(false);
+
     QTranslator translator;
     translator.load(QString("notifier_") + QLocale::system().name());
     app.installTranslator(&translator);

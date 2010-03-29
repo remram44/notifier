@@ -22,6 +22,8 @@
 #include <QMap>
 #include <QTimer>
 
+#include "ConfigDialog.h"
+
 #ifndef PREFIX
 #define PREFIX "/usr/local"
 #endif
@@ -135,6 +137,7 @@ class Notifier : public QWidget {
 private:
     QSystemTrayIcon *m_pTrayIcon;
     QSound *m_pBeep;
+    ConfigDialog *m_pConfigDialog;
 
     QMap<Server*, ServerConf> m_aServers;
 

@@ -13,8 +13,8 @@ DESTDIR = ./
 QT += network
 
 # Input
-HEADERS = Notifier.h Teeworlds.h GameSpy.h Urbanterror.h Mumble.h
-SOURCES = Notifier.cpp main.cpp Teeworlds.cpp GameSpy.cpp Urbanterror.cpp Mumble.cpp
+HEADERS = Notifier.h Teeworlds.h GameSpy.h Urbanterror.h Mumble.h ConfigDialog.h
+SOURCES = Notifier.cpp main.cpp Teeworlds.cpp GameSpy.cpp Urbanterror.cpp Mumble.cpp ConfigDialog.cpp
 
 RC_FILE = notifier.rc
 

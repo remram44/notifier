@@ -40,77 +40,82 @@
         <translation>Notifier</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="65"/>
+        <location filename="Notifier.cpp" line="68"/>
         <source>Check</source>
         <translation>Vérifier</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="71"/>
+        <location filename="Notifier.cpp" line="74"/>
         <source>Tell me again</source>
         <translation>Dis-moi à nouveau</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="78"/>
+        <location filename="Notifier.cpp" line="80"/>
+        <source>Configure servers</source>
+        <translation>Configurer les serveurs</translation>
+    </message>
+    <message>
+        <location filename="Notifier.cpp" line="87"/>
         <source>Quit</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="157"/>
+        <location filename="Notifier.cpp" line="166"/>
         <source>Unknown server type in configuration file: &quot;%3&quot;, %1, line %2</source>
         <translation>Type de serveur inconnu dans le fichier de configuration : &quot;%3&quot;, %1, ligne %2</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="175"/>
+        <location filename="Notifier.cpp" line="184"/>
         <source>Error reading configuration file: %1, line %2</source>
         <translation>Erreur à la lecture du fichier de configuration : %1, ligne %2</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="198"/>
+        <location filename="Notifier.cpp" line="207"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="199"/>
+        <location filename="Notifier.cpp" line="208"/>
         <source>Error: </source>
         <translation>Erreur : </translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="214"/>
+        <location filename="Notifier.cpp" line="223"/>
         <source>%1/%2 players</source>
         <translation>%1/%2 joueurs</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="216"/>
+        <location filename="Notifier.cpp" line="225"/>
         <source>%1 players</source>
         <translation>%1 joueurs</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="221"/>
+        <location filename="Notifier.cpp" line="230"/>
         <source>%1/%2 players in %4</source>
         <translation>%1/%2 joueurs en %4</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="224"/>
+        <location filename="Notifier.cpp" line="233"/>
         <source>%1 players in %4</source>
         <translation>%1 joueurs en %4</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="232"/>
+        <location filename="Notifier.cpp" line="241"/>
         <source>%1/%2 players on %3</source>
         <translation>%1/%2 joueurs sur %3</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="234"/>
+        <location filename="Notifier.cpp" line="243"/>
         <source>%1 players on %3</source>
         <translation>%1 joueurs sur %3</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="239"/>
+        <location filename="Notifier.cpp" line="248"/>
         <source>%1/%2 players on %3 in %4</source>
         <translation>%1/%2 joueurs sur %3 en %4</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="242"/>
+        <location filename="Notifier.cpp" line="251"/>
         <source>%1 players on %3 in %4</source>
         <translation>%1 joueurs sur %3 en %4</translation>
     </message>
