@@ -40,11 +40,15 @@ private:
 
 public:
     GameSpyServer(const char *host, int port);
+    GameSpyServer(const QString &param);
 
     unsigned int numPlayers() const;
     unsigned int maxPlayers() const;
     QString map() const;
     QString mode() const;
+
+private:
+    void setup(const char *host, int port);
 
 private slots:
     void query();

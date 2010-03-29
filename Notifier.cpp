@@ -20,6 +20,9 @@
 #include <QApplication>
 #include <QStringList>
 #include <QtDebug>
+#include <QFile>
+#include <QDir>
+#include <QRegExp>
 
 #include "Teeworlds.h"
 #include "GameSpy.h"
@@ -102,40 +105,97 @@ Notifier::Notifier(QWidget *pParent)
     m_pMessageTimer->setSingleShot(false);
     m_pMessageTimer->setInterval(10000);
 
-    try {
-        addServer(new TeeworldsServer("yoshi.rez-gif.supelec.fr", 8303),
-            "Teeworlds (DM)");
-        addServer(new TeeworldsServer("yoshi.rez-gif.supelec.fr", 8304),
-            "Teeworlds (TDM)");
-        addServer(new TeeworldsServer("yoshi.rez-gif.supelec.fr", 8305),
-            "Teeworlds (CTF)");
-        addServer(new GameSpyServer("mario.rez-gif.supelec.fr", 7787),
-            "UT2004 (mario)");
-        addServer(new UrbanterrorServer("mario.rez-gif.supelec.fr", 27960),
-            "Urbanterror (mario)");
-        addServer(new MumbleServer("mario.rez-gif.supelec.fr", 64738),
-            "Mumble (mario)");
-    }
-    catch(ServerError &e)
+    // Try to open the configuration file
+    bool has_conf = false;
+#ifdef __WIN32__
+    QFile conf(QDir::toNativeSeparators(QDir::homePath() + "/notifier.conf"));
+    if(conf.open(QIODevice::ReadOnly | QIODevice::Text))
+        has_conf = true;
+    else
     {
-        displayError(e.what());
+        conf.setFileName("default.conf");
+        if(conf.open(QIODevice::ReadOnly | QIODevice::Text))
+            has_conf = true;
+    }
+#else
+    QFile conf(QDir::homePath() + "/.notifierrc");
+    if(conf.open(QIODevice::ReadOnly | QIODevice::Text))
+        has_conf = true;
+    else
+    {
+        conf.setFileName(PREFIX "/share/notifier/default.conf");
+        if(conf.open(QIODevice::ReadOnly | QIODevice::Text))
+            has_conf = true;
+    }
+#endif
+    if(has_conf)
+    {
+        unsigned int lineNumber = 1;
+        QByteArray line = conf.readLine(2048);
+        while(!line.isEmpty())
+        {
+            line = line.left(line.size() - 1);
+            QRegExp reg("^([a-z]+) \"(.+)\" "
+                "(s|n) (c|n) (p|n)");
+            if(reg.indexIn(line) != -1)
+            {
+                Server *serv = NULL;
+                QString type = reg.cap(1);
+                QString param;
+                try {
+                    if(reg.matchedLength()+2 <= line.size())
+                        param = line.mid(reg.matchedLength()+1);
+                    if(type == "teeworlds")
+                        serv = new TeeworldsServer(param);
+                    else if(type == "gamespy")
+                        serv = new GameSpyServer(param);
+                    else if(type == "urbanterror")
+                        serv = new UrbanterrorServer(param);
+                    else if(type == "mumble")
+                        serv = new MumbleServer(param);
+                    else
+                        displayError(tr("Unknown server type in configuration "
+                            "file: \"%3\", %1, line %2").arg(conf.fileName())
+                            .arg(lineNumber).arg(type));
+                }
+                catch(ServerError &e)
+                {
+                    displayError(e.what());
+                }
+
+                if(serv != NULL)
+                    addServer(serv,
+                        ServerConf(reg.cap(2), // name
+                            reg.cap(3) == "s", // sound
+                            reg.cap(4) == "c", // color
+                            reg.cap(5) == "p"  // popup
+                            ));
+            }
+            else
+                displayError(tr("Error reading configuration file: %1, line %2")
+                    .arg(conf.fileName()).arg(lineNumber));
+
+            line = conf.readLine(2048);
+            lineNumber++;
+        }
     }
 }
 
-void Notifier::addServer(Server *serv, const QString &name)
+void Notifier::addServer(Server *serv, const ServerConf &conf)
 {
     connect(this, SIGNAL(refreshAll()), serv, SLOT(refresh()));
     connect(serv, SIGNAL(infosChanged(int, int, QString, QString, bool)),
         this, SLOT(infosChanged(int, int, QString, QString, bool)));
     connect(serv, SIGNAL(errorEncountered(QString)),
         this, SLOT(displayError(QString)));
-    m_aServers.insert(serv, name);
+    m_aServers.insert(serv, conf);
 }
 
 void Notifier::displayError(QString error)
 {
+    qDebug() << error;
     Server *serv = qobject_cast<Server*>(sender());
-    QString name = serv?m_aServers[serv]:tr("(unknown origin)");
+    QString name = serv?m_aServers[serv].name:tr("Error");
     Notification n = {name, tr("Error: ") + error};
     m_lErrors.append(n);
     if(!m_pMessageTimer->isActive())
@@ -194,14 +254,15 @@ void Notifier::infosChanged(int players, int max, QString map, QString mode,
     if(!serv)
         return ;
     // Queues the notification to be displayed later
-    QString name = m_aServers[serv];
-    appendNotification(name, players, max, map, mode);
-
-    if(!m_pMessageTimer->isActive())
-        updateMessage();
+    if(m_aServers[serv].display_popup)
+    {
+        appendNotification(m_aServers[serv].name, players, max, map, mode);
+        if(!m_pMessageTimer->isActive())
+            updateMessage();
+    }
 
     // Plays a sound
-    if(gamestarted)
+    if(gamestarted && m_aServers[serv].play_sound)
         m_pBeep->play();
 
     // Updates the icon
@@ -239,10 +300,10 @@ void Notifier::flushNotifications()
 void Notifier::updateIcon()
 {
     bool players = false;
-    QMap<Server*, QString>::const_iterator i = m_aServers.constBegin();
+    QMap<Server*, ServerConf>::const_iterator i = m_aServers.constBegin();
     while(i != m_aServers.constEnd())
     {
-        if(i.key()->numPlayers() > 0)
+        if(i.key()->numPlayers() > 0 && i.value().change_color)
         {
             players = true;
             break;
@@ -263,14 +324,14 @@ void Notifier::tellAgain()
     // Servers with people playing, then the others
     for(p = 0; p <= 1; p++)
     {
-        QMap<Server*, QString>::const_iterator i = m_aServers.constBegin();
+        QMap<Server*, ServerConf>::const_iterator i = m_aServers.constBegin();
         for(; i != m_aServers.constEnd(); ++i)
         {
             if( (p == 0 && i.key()->numPlayers() == 0)
              || (p == 1 && i.key()->numPlayers() > 0) )
                 continue;
             else
-                appendNotification(i.value(), i.key()->numPlayers(),
+                appendNotification(i.value().name, i.key()->numPlayers(),
                     i.key()->maxPlayers(), i.key()->map(), i.key()->mode());
         }
     }

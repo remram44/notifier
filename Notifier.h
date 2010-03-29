@@ -106,6 +106,26 @@ signals:
 };
 
 /**
+ * A server's notification configuration.
+ */
+struct ServerConf {
+
+    QString name;
+    bool play_sound;
+    bool change_color;
+    bool display_popup;
+
+    inline ServerConf() {}
+
+    inline ServerConf(QString p_Name, bool p_Sound, bool p_Color, bool p_Popup)
+      : name(p_Name), play_sound(p_Sound), change_color(p_Color),
+        display_popup(p_Popup)
+    {
+    }
+
+};
+
+/**
  * The notifier.
  */
 class Notifier : public QWidget {
@@ -116,7 +136,7 @@ private:
     QSystemTrayIcon *m_pTrayIcon;
     QSound *m_pBeep;
 
-    QMap<Server*, QString> m_aServers;
+    QMap<Server*, ServerConf> m_aServers;
 
     struct Notification {
         QString title;
@@ -129,7 +149,7 @@ private:
     QIcon m_IconPlayers;
 
 private:
-    void addServer(Server *serv, const QString &name);
+    void addServer(Server *serv, const ServerConf &conf);
     void appendNotification(QString name, unsigned int players,
         unsigned int max, QString map, QString mode);
 

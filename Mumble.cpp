@@ -17,9 +17,32 @@
 #include <QHostInfo>
 #include <QtDebug>
 
-MumbleServer::MumbleServer(const char *host, int port)
-  : m_sHost(host), m_iPort(port), m_iNumPlayers(0), m_iMaxPlayers(0)
+MumbleServer::MumbleServer(const QString &param)
 {
+    QRegExp reg("^([^ ]+) ([0-9]+)$");
+    if(reg.indexIn(param) != -1)
+    {
+        bool ok;
+        int port = reg.cap(2).toInt(&ok, 10);
+        if(ok && port >= 1 && port <= 65535)
+        {
+            setup(reg.cap(1).toLatin1(), port);
+            return ;
+        }
+    }
+
+    throw ServerError(tr("MumbleServer: invalid configuration"));
+}
+
+MumbleServer::MumbleServer(const char *host, int port)
+{
+    setup(host, port);
+}
+
+void MumbleServer::setup(const char *host, int port)
+{
+    m_sHost = host; m_iPort = port; m_iNumPlayers = 0; m_iMaxPlayers = 0;
+
     m_pUdpSocket = new QUdpSocket(this);
     {
         int port = 5000;

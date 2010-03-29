@@ -5,6 +5,11 @@
     <name>GameSpyServer</name>
     <message>
         <location filename="GameSpy.cpp" line="34"/>
+        <source>GameSpyServer: invalid configuration</source>
+        <translation>GameSpyServer : configuration invalide</translation>
+    </message>
+    <message>
+        <location filename="GameSpy.cpp" line="57"/>
         <source>GameSpyServer: listening on port %1</source>
         <translation>GameSpyServer : en écoute sur le port %1</translation>
     </message>
@@ -12,12 +17,17 @@
 <context>
     <name>MumbleServer</name>
     <message>
-        <location filename="Mumble.cpp" line="31"/>
+        <location filename="Mumble.cpp" line="34"/>
+        <source>MumbleServer: invalid configuration</source>
+        <translation>MumbleServer : configuration invalide</translation>
+    </message>
+    <message>
+        <location filename="Mumble.cpp" line="54"/>
         <source>MumbleServer: can&apos;t listen: </source>
         <translation>MumbleServer : impossible d&apos;écouter : </translation>
     </message>
     <message>
-        <location filename="Mumble.cpp" line="34"/>
+        <location filename="Mumble.cpp" line="57"/>
         <source>MumbleServer: listening on port %1</source>
         <translation>MumbleServer : en écoute sur le port %1</translation>
     </message>
@@ -25,72 +35,82 @@
 <context>
     <name>Notifier</name>
     <message>
-        <location filename="Notifier.cpp" line="57"/>
+        <location filename="Notifier.cpp" line="60"/>
         <source>Notifier</source>
         <translation>Notifier</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="62"/>
+        <location filename="Notifier.cpp" line="65"/>
         <source>Check</source>
         <translation>Vérifier</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="68"/>
+        <location filename="Notifier.cpp" line="71"/>
         <source>Tell me again</source>
         <translation>Dis-moi à nouveau</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="75"/>
+        <location filename="Notifier.cpp" line="78"/>
         <source>Quit</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="138"/>
-        <source>(unknown origin)</source>
-        <translation>(origine inconnue)</translation>
+        <location filename="Notifier.cpp" line="157"/>
+        <source>Unknown server type in configuration file: &quot;%3&quot;, %1, line %2</source>
+        <translation>Type de serveur inconnu dans le fichier de configuration : &quot;%3&quot;, %1, ligne %2</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="139"/>
+        <location filename="Notifier.cpp" line="175"/>
+        <source>Error reading configuration file: %1, line %2</source>
+        <translation>Erreur à la lecture du fichier de configuration : %1, ligne %2</translation>
+    </message>
+    <message>
+        <location filename="Notifier.cpp" line="198"/>
+        <source>Error</source>
+        <translation>Erreur</translation>
+    </message>
+    <message>
+        <location filename="Notifier.cpp" line="199"/>
         <source>Error: </source>
         <translation>Erreur : </translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="154"/>
+        <location filename="Notifier.cpp" line="214"/>
         <source>%1/%2 players</source>
         <translation>%1/%2 joueurs</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="160"/>
+        <location filename="Notifier.cpp" line="216"/>
         <source>%1 players</source>
         <translation>%1 joueurs</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="169"/>
+        <location filename="Notifier.cpp" line="221"/>
         <source>%1/%2 players in %4</source>
         <translation>%1/%2 joueurs en %4</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="175"/>
+        <location filename="Notifier.cpp" line="224"/>
         <source>%1 players in %4</source>
         <translation>%1 joueurs en %4</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="187"/>
+        <location filename="Notifier.cpp" line="232"/>
         <source>%1/%2 players on %3</source>
         <translation>%1/%2 joueurs sur %3</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="193"/>
+        <location filename="Notifier.cpp" line="234"/>
         <source>%1 players on %3</source>
         <translation>%1 joueurs sur %3</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="202"/>
+        <location filename="Notifier.cpp" line="239"/>
         <source>%1/%2 players on %3 in %4</source>
         <translation>%1/%2 joueurs sur %3 en %4</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="208"/>
+        <location filename="Notifier.cpp" line="242"/>
         <source>%1 players on %3 in %4</source>
         <translation>%1 joueurs sur %3 en %4</translation>
     </message>
@@ -142,18 +162,23 @@
 <context>
     <name>TeeworldsServer</name>
     <message>
-        <location filename="Teeworlds.cpp" line="31"/>
+        <location filename="Teeworlds.cpp" line="34"/>
+        <source>TeeworldsServer: invalid configuration</source>
+        <translation>TeeworldsServer : configuration invalide</translation>
+    </message>
+    <message>
+        <location filename="Teeworlds.cpp" line="54"/>
         <source>TeeworldsServer: can&apos;t listen: </source>
         <oldsource>GameSpyServer: can&apos;t listen: </oldsource>
         <translation>TeeworldsServer : impossible d&apos;écouter : </translation>
     </message>
     <message>
-        <location filename="Teeworlds.cpp" line="34"/>
+        <location filename="Teeworlds.cpp" line="57"/>
         <source>TeeworldsServer: listening on port %1</source>
         <translation>TeeworldsServer : en écoute sur le port %1</translation>
     </message>
     <message>
-        <location filename="Teeworlds.cpp" line="114"/>
+        <location filename="Teeworlds.cpp" line="137"/>
         <source>Invalid answer</source>
         <translation>Réponse invalide</translation>
     </message>
@@ -161,17 +186,22 @@
 <context>
     <name>UrbanterrorServer</name>
     <message>
-        <location filename="Urbanterror.cpp" line="66"/>
+        <location filename="Urbanterror.cpp" line="69"/>
+        <source>UrbanterrorServer: invalid configuration</source>
+        <translation>UrbanterrorServer : configuration invalide</translation>
+    </message>
+    <message>
+        <location filename="Urbanterror.cpp" line="89"/>
         <source>UrbanterrorServer: can&apos;t listen: </source>
         <translation>UrbanterrorServer : impossible d&apos;écouter : </translation>
     </message>
     <message>
-        <location filename="Urbanterror.cpp" line="69"/>
+        <location filename="Urbanterror.cpp" line="92"/>
         <source>UrbanterrorServer: listening on port %1</source>
         <translation>UrbanterrorServer : en écoute sur le port %1</translation>
     </message>
     <message>
-        <location filename="Urbanterror.cpp" line="136"/>
+        <location filename="Urbanterror.cpp" line="159"/>
         <source>UrbanterrorServer: failure to understand received data</source>
         <translation>UrbanterrorServer : impossible de comprendre les données reçues</translation>
     </message>

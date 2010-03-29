@@ -13,3 +13,4 @@ les serveurs que l'on désire.
 info-bulle par évènement.
    * Remplacer les bulles par des popups « à la MSN », afin de contourner
 certaines limitations et bugs de Windows.
+   * Ajouter la possibilité de configurer les serveurs à surveiller.

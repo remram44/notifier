@@ -52,21 +52,44 @@ static QString gametype(const QString &num)
     }
 }
 
-UrbanterrorServer::UrbanterrorServer(const char *host, int port)
-  : m_sHost(host), m_iPort(port), m_iNumPlayers(0), m_iMaxPlayers(0)
+UrbanterrorServer::UrbanterrorServer(const QString &param)
 {
+    QRegExp reg("^([^ ]+) ([0-9]+)$");
+    if(reg.indexIn(param) != -1)
+    {
+        bool ok;
+        int port = reg.cap(2).toInt(&ok, 10);
+        if(ok && port >= 1 && port <= 65535)
+        {
+            setup(reg.cap(1).toLatin1(), port);
+            return ;
+        }
+    }
+
+    throw ServerError(tr("UrbanterrorServer: invalid configuration"));
+}
+
+UrbanterrorServer::UrbanterrorServer(const char *host, int port)
+{
+    setup(host, port);
+}
+
+void UrbanterrorServer::setup(const char *host, int port)
+{
+    m_sHost = host; m_iPort = port; m_iNumPlayers = 0; m_iMaxPlayers = 0;
+
     m_pUdpSocket = new QUdpSocket(this);
     {
-        int port = 5000;
-        while(!m_pUdpSocket->bind(QHostAddress::Any, port))
+        int lport = 5000;
+        while(!m_pUdpSocket->bind(QHostAddress::Any, lport))
         {
             delete m_pUdpSocket; m_pUdpSocket = new QUdpSocket(this); // FIXME
-            port++;
-            if(port == 5040)
+            lport++;
+            if(lport == 5040)
                 throw ServerError(tr("UrbanterrorServer: "
                     "can't listen: ") + m_pUdpSocket->errorString());
         }
-        qDebug() << tr("UrbanterrorServer: listening on port %1").arg(port);
+        qDebug() << tr("UrbanterrorServer: listening on port %1").arg(lport);
     }
     connect(m_pUdpSocket, SIGNAL(readyRead()), this, SLOT(receiveData()));
 
