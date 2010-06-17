@@ -128,7 +128,7 @@ class ServerFactory;
 class ServerFactoryList {
 
 private:
-    static QMap<QLatin1String, ServerFactory*> m_aFactories;
+    static QMap<QLatin1String, ServerFactory*> *m_aFactories;
 
 public:
     class NonUniqueServerTypeNameError {};
@@ -178,6 +178,15 @@ public:
      */
     virtual Server *createFromConfig(const QString &line) const = 0;
 
+};
+
+template <class T>
+class ServerFactoryRegistrar {
+    T serverFactory;
+public:
+    ServerFactoryRegistrar<T>() {
+        ServerFactoryList::addServerFactory(&serverFactory);
+    }
 };
 
 #endif

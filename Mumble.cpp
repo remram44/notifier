@@ -166,4 +166,4 @@ Server *MumbleServerFactory::createFromConfig(const QString &line) const
     return new MumbleServer(line);
 }
 
-static MumbleServerFactory sf;
+static ServerFactoryRegistrar<MumbleServerFactory> sfr;
