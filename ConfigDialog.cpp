@@ -1,7 +1,7 @@
 #include "ConfigDialog.h"
 
 ConfigDialog::ConfigDialog(QWidget *parent)
-  : QDialog::QDialog(parent)
+  : QDialog(parent)
 {
-
+    ui.setupUi(this);
 }
