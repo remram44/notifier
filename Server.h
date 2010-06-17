@@ -128,7 +128,9 @@ class ServerFactory;
 class ServerFactoryList {
 
 private:
-    static QMap<QLatin1String, ServerFactory*> m_aFactories;
+    QMap<QLatin1String, ServerFactory*> m_aFactories;
+    ServerFactoryList();
+    static ServerFactoryList *getInstance();
 
 public:
     class NonUniqueServerTypeNameError {};
@@ -150,11 +152,14 @@ public:
  */
 class ServerFactory {
 
+private:
+    const QLatin1String m_sName;
+
 public:
     /**
      * Constructor, registers this ServerFactory to the ServerFactoryList.
      */
-    ServerFactory();
+    ServerFactory(QLatin1String sName);
 
     /**
      * Create an empty configuration widget with no associated Server.
@@ -171,7 +176,7 @@ public:
      *
      * @warning Mustn't contain spaces.
      */
-    virtual QLatin1String name() const = 0;
+    inline QLatin1String name() const { return m_sName; }
 
     /**
      * Create a Server from the config file, at startup.

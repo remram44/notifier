@@ -1,28 +1,42 @@
 #include "Server.h"
 
-QMap<QLatin1String, ServerFactory*> ServerFactoryList::m_aFactories;
+// Empty, needed to make it private (DP singleton)
+ServerFactoryList::ServerFactoryList()
+{
+}
+
+ServerFactoryList *ServerFactoryList::getInstance()
+{
+    static ServerFactoryList *sfl = NULL;
+    if(sfl == NULL)
+        sfl = new ServerFactoryList;
+    return sfl;
+}
 
 void ServerFactoryList::addServerFactory(ServerFactory *sf)
     throw(NonUniqueServerTypeNameError)
 {
-    ServerFactory *factory = m_aFactories.value(sf->name(), NULL);
+    QMap<QLatin1String, ServerFactory*> &factories =
+        getInstance()->m_aFactories;
+    ServerFactory *factory = factories.value(sf->name(), NULL);
     if(factory)
         throw NonUniqueServerTypeNameError();
     else
-        m_aFactories[sf->name()] = sf;
+        factories[sf->name()] = sf;
 }
 
 Server *ServerFactoryList::createFromConfig(const QLatin1String &type,
     const QString &param)
 {
-    ServerFactory *factory = m_aFactories.value(type, NULL);
+    ServerFactory *factory = getInstance()->m_aFactories.value(type, NULL);
     if(factory)
         return factory->createFromConfig(param);
     else
         return NULL;
 }
 
-ServerFactory::ServerFactory()
+ServerFactory::ServerFactory(QLatin1String sName)
+  : m_sName(sName)
 {
     ServerFactoryList::addServerFactory(this);
 }

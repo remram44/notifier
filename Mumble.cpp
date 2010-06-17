@@ -161,6 +161,11 @@ void MumbleServer::receiveData()
     }
 }
 
+MumbleServerFactory::MumbleServerFactory()
+  : ServerFactory(QLatin1String("mumble"))
+{
+}
+
 Server *MumbleServerFactory::createFromConfig(const QString &line) const
 {
     return new MumbleServer(line);

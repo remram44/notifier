@@ -96,8 +96,8 @@ signals:
 class MumbleServerFactory : public ServerFactory {
 
 public:
+    MumbleServerFactory();
     virtual QString displayName() const { return "Mumble"; }
-    virtual QLatin1String name() const { return QLatin1String("mumble"); }
     virtual ServerConfWidget *newConfWidget() const
     { return new MumbleServerConfWidget(NULL); }
     Server *createFromConfig(const QString &line) const;
