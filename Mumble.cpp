@@ -17,6 +17,20 @@
 #include <QHostInfo>
 #include <QtDebug>
 
+MumbleServerConfWidget::MumbleServerConfWidget(MumbleServer *server)
+  : m_pServer(server)
+{
+    // TODO : MumbleServerConfWidget setup
+}
+
+void MumbleServerConfWidget::applyChanges()
+{
+    // FIXME : it may be unnecessary to reconstruct ALL of the Servers...
+    if(m_pServer)
+        delete m_pServer;
+    m_pServer = new MumbleServer(m_pHost->text(), m_pPort->value(), this);
+}
+
 MumbleServer::MumbleServer(const QString &param)
 {
     QRegExp reg("^([^ ]+) ([0-9]+)$");
@@ -34,15 +48,18 @@ MumbleServer::MumbleServer(const QString &param)
     throw ServerError(tr("MumbleServer: invalid configuration"));
 }
 
-MumbleServer::MumbleServer(const char *host, int port)
+MumbleServer::MumbleServer(const QString &host, int port,
+    MumbleServerConfWidget *w)
+  : m_pConfWidget(w)
 {
     setup(host, port);
 }
 
-void MumbleServer::setup(const char *host, int port)
+void MumbleServer::setup(const QString &host, int port)
 {
     m_sHost = host; m_iPort = port; m_iNumPlayers = 0; m_iMaxPlayers = 0;
 
+    // Setup socket
     m_pUdpSocket = new QUdpSocket(this);
     {
         int port = 5000;
@@ -58,6 +75,11 @@ void MumbleServer::setup(const char *host, int port)
     }
     connect(m_pUdpSocket, SIGNAL(readyRead()), this, SLOT(receiveData()));
 
+    // Setup configuration widget
+    if(!m_pConfWidget)
+        m_pConfWidget = new MumbleServerConfWidget(this);
+
+    // Setup timer
     m_pTimer = new QTimer(this);
     m_pTimer->setSingleShot(false);
     connect(m_pTimer, SIGNAL(timeout()), this, SLOT(query()));
@@ -84,6 +106,11 @@ QString MumbleServer::map() const
 QString MumbleServer::mode() const
 {
     return "";
+}
+
+ServerConfWidget *MumbleServer::confWidget()
+{
+    return m_pConfWidget;
 }
 
 void MumbleServer::query()
@@ -132,4 +159,9 @@ void MumbleServer::receiveData()
             emit infosChanged(m_iNumPlayers, m_iMaxPlayers, "", "",
                 old_players == 0 && m_iNumPlayers > 0);
     }
+}
+
+Server *MumbleServerFactory::createFromConfig(const QString &line) const
+{
+    return new MumbleServer(line);
 }

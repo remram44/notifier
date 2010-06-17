@@ -24,11 +24,6 @@
 #include <QDir>
 #include <QRegExp>
 
-#include "Teeworlds.h"
-#include "GameSpy.h"
-#include "Urbanterror.h"
-#include "Mumble.h"
-
 ServerError::ServerError(const QString error)
   : w(error)
 {
@@ -154,15 +149,10 @@ Notifier::Notifier(QWidget *pParent)
                 try {
                     if(reg.matchedLength()+2 <= line.size())
                         param = line.mid(reg.matchedLength()+1);
-                    if(type == "teeworlds")
-                        serv = new TeeworldsServer(param);
-                    else if(type == "gamespy")
-                        serv = new GameSpyServer(param);
-                    else if(type == "urbanterror")
-                        serv = new UrbanterrorServer(param);
-                    else if(type == "mumble")
-                        serv = new MumbleServer(param);
-                    else
+                    serv = ServerFactoryList::createFromConfig(
+                        QLatin1String(type.toLatin1().constData()), // FIXME
+                        param);
+                    if(!serv)
                         displayError(tr("Unknown server type in configuration "
                             "file: \"%3\", %1, line %2").arg(conf.fileName())
                             .arg(lineNumber).arg(type));

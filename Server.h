@@ -17,10 +17,42 @@
 #define SERVER_H
 
 #include <exception>
-#include <QString>
 #include <QObject>
+#include <QString>
+#include <QWidget>
+#include <QMap>
 
+/**
+ * Utility function.
+ *
+ * Indicate whether the assignment changes the destination's value.
+ */
+template<typename T>
+bool confirm_assign(T *dst, const T &src)
+{
+    if(*dst != src)
+    {
+        *dst = src;
+        return true;
+    }
+    else
+        return false;
+}
+
+class ServerConfWidget : public QWidget {
+
+    Q_OBJECT
+
+public slots:
+    virtual void applyChanges() = 0;
+
+};
+
+/**
+ * Fatal error during a Server setup.
+ */
 class ServerError : public std::exception {
+
 private:
     QString w;
 
@@ -28,6 +60,7 @@ public:
     ServerError(const QString error);
     virtual const char *what() const throw();
     virtual ~ServerError() throw() {}
+
 };
 
 /**
@@ -58,6 +91,11 @@ public:
      */
     virtual QString mode() const;
 
+    /**
+     * Returns the configuration widget for this Server.
+     */
+    virtual ServerConfWidget *confWidget() = 0;
+
 public slots:
     /**
      * Forcibly update the information by querying the server.
@@ -79,6 +117,69 @@ signals:
      * Signal emitted on errors.
      */
     void errorEncountered(QString text);
+
+};
+
+class ServerFactory;
+
+/**
+ * Singleton registering all the ServerFactories.
+ */
+class ServerFactoryList {
+
+private:
+    static QMap<QLatin1String, ServerFactory*> m_aFactories;
+
+public:
+    class NonUniqueServerTypeNameError {};
+
+    static void addServerFactory(ServerFactory *sf)
+        throw(NonUniqueServerTypeNameError);
+
+    static Server *createFromConfig(const QLatin1String &type,
+        const QString &param);
+
+};
+
+/**
+ * ServerFactory is subclassed for every Server subclass, and a static instance
+ * is created and registers with ServerFactoryList.
+ *
+ * These objects are responsible for the creation of new Servers of the
+ * associated type.
+ */
+class ServerFactory {
+
+public:
+    /**
+     * Constructor, registers this ServerFactory to the ServerFactoryList.
+     */
+    ServerFactory()
+    {
+        ServerFactoryList::addServerFactory(this);
+    }
+
+    /**
+     * Create an empty configuration widget with no associated Server.
+     */
+    virtual ServerConfWidget *newConfWidget() = 0;
+
+    /**
+     * Displayed name of this Server (i.e. localized).
+     */
+    virtual QString displayName() const = 0;
+
+    /**
+     * Internal name of this Server type.
+     *
+     * @warning Mustn't contain spaces.
+     */
+    virtual QLatin1String name() const = 0;
+
+    /**
+     * Create a Server from the config file, at startup.
+     */
+    virtual Server *createFromConfig(const QString &line) const = 0;
 
 };
 

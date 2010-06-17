@@ -14,7 +14,7 @@ QT += network
 
 # Program
 HEADERS = Notifier.h Server.h ConfigDialog.h
-SOURCES = Notifier.cpp main.cpp ConfigDialog.cpp
+SOURCES = Notifier.cpp Server.cpp main.cpp ConfigDialog.cpp
 FORMS = ConfigDialog.ui
 RC_FILE = notifier.rc
 

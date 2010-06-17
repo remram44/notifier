@@ -16,9 +16,35 @@
 #ifndef MUMBLE_H
 #define MUMBLE_H
 
-#include "Notifier.h"
+#include "Server.h"
 #include <QUdpSocket>
+#include <QString>
+#include <QLatin1String>
 #include <QTimer>
+#include <QLineEdit>
+#include <QSpinBox>
+
+class MumbleServer;
+
+/**
+ * The MumbleServer configuration widget.
+ */
+class MumbleServerConfWidget : public ServerConfWidget {
+
+    Q_OBJECT
+
+private:
+    MumbleServer *m_pServer;
+    QLineEdit *m_pHost;
+    QSpinBox *m_pPort;
+
+public:
+    MumbleServerConfWidget(MumbleServer *serv);
+
+public slots:
+    void applyChanges();
+
+};
 
 /**
  * A Mumble serveur.
@@ -33,11 +59,14 @@ private:
     int m_iPort;
     QTimer *m_pTimer;
 
+    MumbleServerConfWidget *m_pConfWidget;
+
     unsigned int m_iNumPlayers;
     unsigned int m_iMaxPlayers;
 
 public:
-    MumbleServer(const char *host, int port);
+    MumbleServer(const QString &host, int port,
+        MumbleServerConfWidget *w = NULL);
     MumbleServer(const QString &param);
 
     unsigned int numPlayers() const;
@@ -45,8 +74,10 @@ public:
     QString map() const;
     QString mode() const;
 
+    ServerConfWidget *confWidget();
+
 private:
-    void setup(const char *host, int port);
+    void setup(const QString &host, int port);
 
 private slots:
     void query();
@@ -61,5 +92,18 @@ signals:
     void errorEncountered(QString text);
 
 };
+
+class MumbleServerFactory {
+
+public:
+    virtual QString displayName() const { return "Mumble"; }
+    virtual QLatin1String name() const { return QLatin1String("mumble"); }
+    virtual ServerConfWidget *newConfWidget() const
+    { return new MumbleServerConfWidget(NULL); }
+    Server *createFromConfig(const QString &line) const;
+
+};
+
+static MumbleServerFactory sf;
 
 #endif
