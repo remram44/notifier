@@ -12,13 +12,15 @@ DESTDIR = ./
 
 QT += network
 
-# Input
-HEADERS = Notifier.h Teeworlds.h GameSpy.h Urbanterror.h Mumble.h ConfigDialog.h
-SOURCES = Notifier.cpp main.cpp Teeworlds.cpp GameSpy.cpp Urbanterror.cpp Mumble.cpp ConfigDialog.cpp
-
+# Program
+HEADERS = Notifier.h Server.h ConfigDialog.h
+SOURCES = Notifier.cpp main.cpp ConfigDialog.cpp
 FORMS = ConfigDialog.ui
-
 RC_FILE = notifier.rc
+
+# Server modules
+HEADERS += Teeworlds.h GameSpy.h Urbanterror.h Mumble.h
+SOURCES += Teeworlds.cpp GameSpy.cpp Urbanterror.cpp Mumble.cpp
 
 TRANSLATIONS = notifier_fr.ts
 CODECFORTR = ISO-8859-1

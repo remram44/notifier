@@ -22,6 +22,7 @@
 #include <QMap>
 #include <QTimer>
 
+#include "Server.h"
 #include "ConfigDialog.h"
 
 #ifndef PREFIX
@@ -44,68 +45,6 @@ bool confirm_assign(T *dst, const T &src)
     else
         return false;
 }
-
-class ServerError : public std::exception {
-private:
-    QString w;
-
-public:
-    ServerError(const QString error);
-    virtual const char *what() const throw();
-    virtual ~ServerError() throw() {}
-};
-
-/**
- * A server we can query for players information.
- */
-class Server : public QObject {
-
-    Q_OBJECT
-
-public:
-    /**
-     * The number of players currently in-game.
-     */
-    virtual unsigned int numPlayers() const = 0;
-
-    /**
-     * The maximum number of players that can join the game, or 0.
-     */
-    virtual unsigned int maxPlayers() const;
-
-    /**
-     * The map's name, if relevant, or QString().
-     */
-    virtual QString map() const;
-
-    /**
-     * The game mode, if relevant, or QString().
-     */
-    virtual QString mode() const;
-
-public slots:
-    /**
-     * Forcibly update the information by querying the server.
-     */
-    virtual void refresh() = 0;
-
-signals:
-    /**
-     * Signal emitted when the informations have changed.
-     *
-     * @param gamestarted Boolean indicating whether the game just started, ie
-     * there was no player before and there are players now. It should therefore
-     * never be set two consecutive times.
-     */
-    void infosChanged(unsigned int players, unsigned int max, QString map,
-        QString mode, bool gamestarted);
-
-    /**
-     * Signal emitted on errors.
-     */
-    void errorEncountered(QString text);
-
-};
 
 /**
  * A server's notification configuration.
