@@ -93,7 +93,7 @@ signals:
 
 };
 
-class MumbleServerFactory {
+class MumbleServerFactory : public ServerFactory {
 
 public:
     virtual QString displayName() const { return "Mumble"; }
@@ -103,7 +103,5 @@ public:
     Server *createFromConfig(const QString &line) const;
 
 };
-
-static MumbleServerFactory sf;
 
 #endif

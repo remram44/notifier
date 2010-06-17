@@ -154,15 +154,12 @@ public:
     /**
      * Constructor, registers this ServerFactory to the ServerFactoryList.
      */
-    ServerFactory()
-    {
-        ServerFactoryList::addServerFactory(this);
-    }
+    ServerFactory();
 
     /**
      * Create an empty configuration widget with no associated Server.
      */
-    virtual ServerConfWidget *newConfWidget() = 0;
+    virtual ServerConfWidget *newConfWidget() const = 0;
 
     /**
      * Displayed name of this Server (i.e. localized).

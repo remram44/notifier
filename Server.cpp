@@ -21,3 +21,8 @@ Server *ServerFactoryList::createFromConfig(const QLatin1String &type,
     else
         return NULL;
 }
+
+ServerFactory::ServerFactory()
+{
+    ServerFactoryList::addServerFactory(this);
+}
