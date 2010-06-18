@@ -25,9 +25,7 @@
 #include "Server.h"
 #include "ConfigDialog.h"
 
-#ifndef PREFIX
-#define PREFIX "/usr/local"
-#endif
+#include "config.h"
 
 /**
  * A server's notification configuration.

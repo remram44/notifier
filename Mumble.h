@@ -18,8 +18,6 @@
 
 #include "Server.h"
 #include <QUdpSocket>
-#include <QString>
-#include <QLatin1String>
 #include <QTimer>
 #include <QLineEdit>
 #include <QSpinBox>

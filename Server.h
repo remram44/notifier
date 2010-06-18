@@ -19,6 +19,7 @@
 #include <exception>
 #include <QObject>
 #include <QString>
+#include <QLatin1String>
 #include <QWidget>
 #include <QMap>
 

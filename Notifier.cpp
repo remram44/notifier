@@ -93,9 +93,9 @@ Notifier::Notifier(QWidget *pParent)
     m_IconPlayers = QIcon("icon2.png");
     m_pBeep = new QSound("beep.wav");
 #else
-    m_IconEmpty = QIcon(PREFIX "/share/notifier/icon.png");
-    m_IconPlayers = QIcon(PREFIX "/share/notifier/icon2.png");
-    m_pBeep = new QSound(PREFIX "/share/notifier/beep.wab");
+    m_IconEmpty = QIcon(SHARE_DIR "/icon.png");
+    m_IconPlayers = QIcon(SHARE_DIR "/icon2.png");
+    m_pBeep = new QSound(SHARE_DIR "/beep.wab");
 #endif
     m_pTrayIcon->setIcon(m_IconEmpty);
     m_pTrayIcon->show();
