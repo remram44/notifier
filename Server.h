@@ -128,7 +128,9 @@ class ServerFactory;
 class ServerFactoryList {
 
 private:
-    static QMap<QLatin1String, ServerFactory*> *m_aFactories;
+    QMap<QLatin1String, ServerFactory*> m_aFactories;
+    ServerFactoryList();
+    static ServerFactoryList *getInstance();
 
 public:
     class NonUniqueServerTypeNameError {};
@@ -147,15 +149,12 @@ public:
  *
  * These objects are responsible for the creation of new Servers of the
  * associated type.
+ * They must be registered to the ServerFactoryList using a
+ * ServerFactoryRegistrar or they won't be used by the program.
  */
 class ServerFactory {
 
 public:
-    /**
-     * Constructor, registers this ServerFactory to the ServerFactoryList.
-     */
-    ServerFactory();
-
     /**
      * Create an empty configuration widget with no associated Server.
      */
@@ -180,6 +179,9 @@ public:
 
 };
 
+/**
+ * Class used to register a ServerFactory to the ServerFactoryList.
+ */
 template <class T>
 class ServerFactoryRegistrar {
     T serverFactory;
