@@ -24,14 +24,20 @@
 #include <QDir>
 #include <QRegExp>
 
-ServerError::ServerError(const QString error)
-  : w(error)
+MonitoredServer::MonitoredServer(QString p_Name, bool p_Sound, bool p_Color,
+    bool p_Popup, Server *p_Server)
+  : name(p_Name), play_sound(p_Sound), change_color(p_Color),
+    display_popup(p_Popup), server(p_Server)
 {
-}
-
-const char *ServerError::what() const throw()
-{
-    return w.toLocal8Bit();
+    connect(server,
+        SIGNAL(infosChanged(unsigned int, unsigned int, QString, QString,
+            bool)),
+        this,
+        SIGNAL(infosChanged(unsigned int, unsigned int, QString, QString,
+            bool)));
+    connect(server, SIGNAL(errorEncountered(QString)),
+        this, SIGNAL(errorEncountered(QString)));
+    connect(this, SIGNAL(refresh()), server, SLOT(refresh()));
 }
 
 unsigned int Server::maxPlayers() const
@@ -163,11 +169,12 @@ Notifier::Notifier(QWidget *pParent)
                 }
 
                 if(serv != NULL)
-                    addServer(serv,
-                        ServerConf(reg.cap(2), // name
+                    addServer(new MonitoredServer(
+                            reg.cap(2), // name
                             reg.cap(3) == "s", // sound
                             reg.cap(4) == "c", // color
-                            reg.cap(5) == "p"  // popup
+                            reg.cap(5) == "p", // popup
+                            serv
                             ));
             }
             else
@@ -180,21 +187,22 @@ Notifier::Notifier(QWidget *pParent)
     }
 }
 
-void Notifier::addServer(Server *serv, const ServerConf &conf)
+void Notifier::addServer(MonitoredServer *mserv)
 {
+    Server *const serv = mserv->server;
     connect(this, SIGNAL(refreshAll()), serv, SLOT(refresh()));
     connect(serv, SIGNAL(infosChanged(int, int, QString, QString, bool)),
         this, SLOT(infosChanged(int, int, QString, QString, bool)));
     connect(serv, SIGNAL(errorEncountered(QString)),
         this, SLOT(displayError(QString)));
-    m_aServers.insert(serv, conf);
+    m_lServers.push_back(mserv);
 }
 
 void Notifier::displayError(QString error)
 {
     qDebug() << error;
-    Server *serv = qobject_cast<Server*>(sender());
-    QString name = serv?m_aServers[serv].name:tr("Error");
+    MonitoredServer *mserv = qobject_cast<MonitoredServer*>(sender());
+    QString name = mserv?mserv->name:tr("Error");
     Notification n = {name, tr("Error: ") + error};
     m_lErrors.append(n);
     if(!m_pMessageTimer->isActive())
@@ -249,19 +257,19 @@ void Notifier::appendNotification(QString name, unsigned int players,
 void Notifier::infosChanged(int players, int max, QString map, QString mode,
     bool gamestarted)
 {
-    Server *serv = qobject_cast<Server*>(sender());
-    if(!serv)
+    MonitoredServer *mserv = qobject_cast<MonitoredServer*>(sender());
+    if(!mserv)
         return ;
     // Queues the notification to be displayed later
-    if(m_aServers[serv].display_popup)
+    if(mserv->display_popup)
     {
-        appendNotification(m_aServers[serv].name, players, max, map, mode);
+        appendNotification(mserv->name, players, max, map, mode);
         if(!m_pMessageTimer->isActive())
             updateMessage();
     }
 
     // Plays a sound
-    if(gamestarted && m_aServers[serv].play_sound)
+    if(gamestarted && mserv->play_sound)
         m_pBeep->play();
 
     // Updates the icon
@@ -299,10 +307,10 @@ void Notifier::flushNotifications()
 void Notifier::updateIcon()
 {
     bool players = false;
-    QMap<Server*, ServerConf>::const_iterator i = m_aServers.constBegin();
-    while(i != m_aServers.constEnd())
+    QList<MonitoredServer*>::const_iterator i = m_lServers.constBegin();
+    while(i != m_lServers.constEnd())
     {
-        if(i.key()->numPlayers() > 0 && i.value().change_color)
+        if((*i)->numPlayers() > 0 && (*i)->change_color)
         {
             players = true;
             break;
@@ -323,15 +331,15 @@ void Notifier::tellAgain()
     // Servers with people playing, then the others
     for(p = 0; p <= 1; p++)
     {
-        QMap<Server*, ServerConf>::const_iterator i = m_aServers.constBegin();
-        for(; i != m_aServers.constEnd(); ++i)
+        QList<MonitoredServer*>::const_iterator i = m_lServers.constBegin();
+        for(; i != m_lServers.constEnd(); ++i)
         {
-            if( (p == 0 && i.key()->numPlayers() == 0)
-             || (p == 1 && i.key()->numPlayers() > 0) )
+            if( (p == 0 && (*i)->numPlayers() == 0)
+             || (p == 1 && (*i)->numPlayers() > 0) )
                 continue;
             else
-                appendNotification(i.value().name, i.key()->numPlayers(),
-                    i.key()->maxPlayers(), i.key()->map(), i.key()->mode());
+                appendNotification((*i)->name, (*i)->numPlayers(),
+                    (*i)->maxPlayers(), (*i)->map(), (*i)->mode());
         }
     }
 

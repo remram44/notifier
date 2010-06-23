@@ -15,6 +15,16 @@
 
 #include "Server.h"
 
+ServerError::ServerError(const QString error)
+  : w(error)
+{
+}
+
+const char *ServerError::what() const throw()
+{
+    return w.toLocal8Bit();
+}
+
 // Empty, needed to make it private (DP singleton)
 ServerFactoryList::ServerFactoryList()
 {

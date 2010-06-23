@@ -28,22 +28,58 @@
 #include "config.h"
 
 /**
- * A server's notification configuration.
+ * A server being monitored, i.e. the Server representation plus the
+ * notifiation configuration for this server.
  */
-struct ServerConf {
+class MonitoredServer : public QObject {
 
+    Q_OBJECT
+
+public:
     QString name;
     bool play_sound;
     bool change_color;
     bool display_popup;
+    Server *server;
 
-    inline ServerConf() {}
+public:
+    inline MonitoredServer() {}
+    MonitoredServer(QString p_Name, bool p_Sound, bool p_Color, bool p_Popup,
+        Server *p_Server);
 
-    inline ServerConf(QString p_Name, bool p_Sound, bool p_Color, bool p_Popup)
-      : name(p_Name), play_sound(p_Sound), change_color(p_Color),
-        display_popup(p_Popup)
-    {
-    }
+public:
+    /**
+     * The number of players currently in-game.
+     */
+    inline unsigned int numPlayers() const { return server->numPlayers(); }
+    /**
+     * The maximum number of players that can join the game, or 0.
+     */
+    inline unsigned int maxPlayers() const { return server->maxPlayers(); }
+    /**
+     * The map's name, if relevant, or QString().
+     */
+    inline QString map() const { return server->map(); }
+    /**
+     * The game mode, if relevant, or QString().
+     */
+    inline QString mode() const { return server->mode(); }
+
+signals:
+    /**
+     * Signal emitted when the informations on the server have changed.
+     *
+     * @param gamestarted Boolean indicating whether the game just started, ie
+     * there was no player before and there are players now. It should therefore
+     * never be set two consecutive times.
+     */
+    void infosChanged(unsigned int players, unsigned int max, QString map,
+        QString mode, bool gamestarted);
+
+    /**
+     * Signal emitted on errors.
+     */
+    void errorEncountered(QString text);
 
 };
 
@@ -59,7 +95,7 @@ private:
     QSound *m_pBeep;
     ConfigDialog *m_pConfigDialog;
 
-    QMap<Server*, ServerConf> m_aServers;
+    QList<MonitoredServer*> m_lServers;
 
     struct Notification {
         QString title;
@@ -72,7 +108,7 @@ private:
     QIcon m_IconPlayers;
 
 private:
-    void addServer(Server *serv, const ServerConf &conf);
+    void addServer(MonitoredServer *serv);
     void appendNotification(QString name, unsigned int players,
         unsigned int max, QString map, QString mode);
 
