@@ -24,22 +24,6 @@
 #include <QDir>
 #include <QRegExp>
 
-MonitoredServer::MonitoredServer(QString p_Name, bool p_Sound, bool p_Color,
-    bool p_Popup, Server *p_Server)
-  : m_name(p_Name), m_play_sound(p_Sound), m_change_color(p_Color),
-    m_display_popup(p_Popup), server(p_Server)
-{
-    connect(server,
-        SIGNAL(infosChanged(unsigned int, unsigned int, QString, QString,
-            bool)),
-        this,
-        SIGNAL(infosChanged(unsigned int, unsigned int, QString, QString,
-            bool)));
-    connect(server, SIGNAL(errorEncountered(QString)),
-        this, SIGNAL(errorEncountered(QString)));
-    connect(this, SIGNAL(refresh()), server, SLOT(refresh()));
-}
-
 unsigned int Server::maxPlayers() const
 {
     return 0;

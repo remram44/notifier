@@ -13,8 +13,10 @@ DESTDIR = ./
 QT += network
 
 # Program
-HEADERS = Notifier.h Server.h ConfigDialog.h
-SOURCES = Notifier.cpp Server.cpp main.cpp ConfigDialog.cpp
+HEADERS = Notifier.h Server.h ConfigDialog.h \
+    MonitoredServer.h
+SOURCES = Notifier.cpp Server.cpp main.cpp ConfigDialog.cpp \
+    MonitoredServer.cpp
 FORMS = ConfigDialog.ui
 RC_FILE = notifier.rc
 
