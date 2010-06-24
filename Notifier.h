@@ -23,7 +23,7 @@
 #include <QTimer>
 
 #include "Server.h"
-#include "ConfigDialog.h"
+#include "ConfigDialog/ConfigDialog.h"
 #include "MonitoredServer.h"
 
 #include "config.h"

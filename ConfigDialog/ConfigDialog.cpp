@@ -13,24 +13,13 @@
  *  0. You just DO WHAT THE FUCK YOU WANT TO.
  */
 
-#ifndef CONFIGDIALOG_H
-#define CONFIGDIALOG_H
+#include "ConfigDialog.h"
+#include "ConfigDialog/ServerListWidget.h"
 
-#include "ui_ConfigDialog.h"
-
-/**
- * Servers configuration dialog.
- */
-class ConfigDialog : public QDialog {
-
-    Q_OBJECT
-
-private:
-    Ui::ConfigDialog ui;
-
-public:
-    ConfigDialog(QWidget *parent);
-
-};
-
-#endif
+ConfigDialog::ConfigDialog(QList<MonitoredServer*> *monitoredServerList, QWidget *parent)
+  : QDialog(parent)
+{
+    ui.setupUi(this);
+    ServerListWidget *w = new ServerListWidget (monitoredServerList, this);
+    this->layout()->addWidget(w);
+}

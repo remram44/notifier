@@ -13,10 +13,26 @@
  *  0. You just DO WHAT THE FUCK YOU WANT TO.
  */
 
-#include "ConfigDialog.h"
+#ifndef CONFIGDIALOG_H
+#define CONFIGDIALOG_H
 
-ConfigDialog::ConfigDialog(QWidget *parent)
-  : QDialog(parent)
-{
-    ui.setupUi(this);
-}
+#include "ui_ConfigDialog.h"
+
+class MonitoredServer;
+
+/**
+ * Servers configuration dialog.
+ */
+class ConfigDialog : public QDialog {
+
+    Q_OBJECT
+
+private:
+    Ui::ConfigDialog ui;
+
+public:
+    ConfigDialog(QList<MonitoredServer*> *monitoredServerList, QWidget *parent);
+
+};
+
+#endif

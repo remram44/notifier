@@ -45,7 +45,7 @@ class ServerConfWidget : public QWidget {
     Q_OBJECT
 
 public slots:
-    virtual void applyChanges() = 0;
+    virtual void applyChanges() {}
 
 };
 

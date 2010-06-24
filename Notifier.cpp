@@ -45,7 +45,7 @@ Notifier::Notifier(QWidget *pParent)
     setWindowTitle(tr("Notifier"));
 
     // Configuration dialog
-    m_pConfigDialog = new ConfigDialog(this);
+    m_pConfigDialog = new ConfigDialog(&m_lServers, this);
 
     // System tray icon creation
     QMenu *trayMenu = new QMenu(this);
