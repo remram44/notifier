@@ -21,7 +21,7 @@ SOURCES = Notifier.cpp Server.cpp main.cpp ConfigDialog/ConfigDialog.cpp \
     MonitoredServer.cpp \
     ConfigDialog/ServerListModel.cpp \
     ConfigDialog/ServerListWidget.cpp
-FORMS = ConfigDialog.ui
+FORMS = ConfigDialog/ConfigDialog.ui
 RC_FILE = notifier.rc
 
 # Server modules
