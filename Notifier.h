@@ -43,9 +43,8 @@ public:
     Server *server;
 
 public:
-    inline MonitoredServer() {}
-    MonitoredServer(QString p_Name, bool p_Sound, bool p_Color, bool p_Popup,
-        Server *p_Server);
+    MonitoredServer(QString p_Name = QString(), bool p_Sound = true,
+        bool p_Color = true, bool p_Popup = true, Server *p_Server = 0);
 
 public:
     /**
