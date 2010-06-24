@@ -55,7 +55,6 @@ QVariant ServerListModel::data ( const QModelIndex & index, int role ) const
         switch (index.column())
         {
         case 2: //Play sound
-            return true;
             return server->play_sound() ? Qt::Checked : Qt::Unchecked;
         case 3: //Change icon
             return server->change_icon() ? Qt::Checked : Qt::Unchecked;
