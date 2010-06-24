@@ -30,13 +30,13 @@ class MonitoredServer : public QObject {
 private:
     QString m_name;
     bool m_play_sound;
-    bool m_change_color;
+    bool m_change_icon;
     bool m_display_popup;
     Server *server;
 
 public:
     MonitoredServer(QString p_Name = QString(), bool p_Sound = true,
-        bool p_Color = true, bool p_Popup = true, Server *p_Server = 0);
+        bool p_Icon = true, bool p_Popup = true, Server *p_Server = 0);
 
 public:
     //! Name given by the user to the server
@@ -46,7 +46,7 @@ public:
     bool play_sound() const {return m_play_sound;}
 
     //! Whether the icon should be changed for this server
-    bool change_icon() const {return m_change_color;}
+    bool change_icon() const {return m_change_icon;}
 
     //! Whether a popup should be display for this server
     bool display_popup() const {return m_display_popup;}

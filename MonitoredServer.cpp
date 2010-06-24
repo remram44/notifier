@@ -15,9 +15,9 @@
 
 #include "MonitoredServer.h"
 
-MonitoredServer::MonitoredServer(QString p_Name, bool p_Sound, bool p_Color,
+MonitoredServer::MonitoredServer(QString p_Name, bool p_Sound, bool p_Icon,
     bool p_Popup, Server *p_Server)
-  : m_name(p_Name), m_play_sound(p_Sound), m_change_color(p_Color),
+  : m_name(p_Name), m_play_sound(p_Sound), m_change_icon(p_Icon),
     m_display_popup(p_Popup), server(p_Server)
 {
     connect(server,
