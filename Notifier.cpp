@@ -26,8 +26,8 @@
 
 MonitoredServer::MonitoredServer(QString p_Name, bool p_Sound, bool p_Color,
     bool p_Popup, Server *p_Server)
-  : name(p_Name), play_sound(p_Sound), change_color(p_Color),
-    display_popup(p_Popup), server(p_Server)
+  : m_name(p_Name), m_play_sound(p_Sound), m_change_color(p_Color),
+    m_display_popup(p_Popup), server(p_Server)
 {
     connect(server,
         SIGNAL(infosChanged(unsigned int, unsigned int, QString, QString,
@@ -189,11 +189,10 @@ Notifier::Notifier(QWidget *pParent)
 
 void Notifier::addServer(MonitoredServer *mserv)
 {
-    Server *const serv = mserv->server;
-    connect(this, SIGNAL(refreshAll()), serv, SLOT(refresh()));
-    connect(serv, SIGNAL(infosChanged(int, int, QString, QString, bool)),
+    connect(this, SIGNAL(refreshAll()), mserv, SLOT(refresh()));
+    connect(mserv, SIGNAL(infosChanged(int, int, QString, QString, bool)),
         this, SLOT(infosChanged(int, int, QString, QString, bool)));
-    connect(serv, SIGNAL(errorEncountered(QString)),
+    connect(mserv, SIGNAL(errorEncountered(QString)),
         this, SLOT(displayError(QString)));
     m_lServers.push_back(mserv);
 }
@@ -202,7 +201,7 @@ void Notifier::displayError(QString error)
 {
     qDebug() << error;
     MonitoredServer *mserv = qobject_cast<MonitoredServer*>(sender());
-    QString name = mserv?mserv->name:tr("Error");
+    QString name = mserv ? mserv->name() : tr("Error");
     Notification n = {name, tr("Error: ") + error};
     m_lErrors.append(n);
     if(!m_pMessageTimer->isActive())
@@ -261,15 +260,15 @@ void Notifier::infosChanged(int players, int max, QString map, QString mode,
     if(!mserv)
         return ;
     // Queues the notification to be displayed later
-    if(mserv->display_popup)
+    if(mserv->display_popup())
     {
-        appendNotification(mserv->name, players, max, map, mode);
+        appendNotification(mserv->name(), players, max, map, mode);
         if(!m_pMessageTimer->isActive())
             updateMessage();
     }
 
     // Plays a sound
-    if(gamestarted && mserv->play_sound)
+    if(gamestarted && mserv->play_sound())
         m_pBeep->play();
 
     // Updates the icon
@@ -310,7 +309,7 @@ void Notifier::updateIcon()
     QList<MonitoredServer*>::const_iterator i = m_lServers.constBegin();
     while(i != m_lServers.constEnd())
     {
-        if((*i)->numPlayers() > 0 && (*i)->change_color)
+        if((*i)->numPlayers() > 0 && (*i)->change_icon())
         {
             players = true;
             break;
@@ -338,7 +337,7 @@ void Notifier::tellAgain()
              || (p == 1 && (*i)->numPlayers() > 0) )
                 continue;
             else
-                appendNotification((*i)->name, (*i)->numPlayers(),
+                appendNotification((*i)->name(), (*i)->numPlayers(),
                     (*i)->maxPlayers(), (*i)->map(), (*i)->mode());
         }
     }

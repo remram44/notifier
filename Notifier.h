@@ -35,11 +35,11 @@ class MonitoredServer : public QObject {
 
     Q_OBJECT
 
-public:
-    QString name;
-    bool play_sound;
-    bool change_color;
-    bool display_popup;
+private:
+    QString m_name;
+    bool m_play_sound;
+    bool m_change_color;
+    bool m_display_popup;
     Server *server;
 
 public:
@@ -47,22 +47,34 @@ public:
         bool p_Color = true, bool p_Popup = true, Server *p_Server = 0);
 
 public:
+    //! Name given by the user to the server
+    QString name() const {return m_name;}
+
+    //! Whether a sound should be played for this server
+    bool play_sound() const {return m_play_sound;}
+
+    //! Whether the icon should be changed for this server
+    bool change_icon() const {return m_change_color;}
+
+    //! Whether a popup should be display for this server
+    bool display_popup() const {return m_display_popup;}
+
     /**
      * The number of players currently in-game.
      */
-    inline unsigned int numPlayers() const { return server->numPlayers(); }
+    unsigned int numPlayers() const { return server->numPlayers(); }
     /**
      * The maximum number of players that can join the game, or 0.
      */
-    inline unsigned int maxPlayers() const { return server->maxPlayers(); }
+    unsigned int maxPlayers() const { return server->maxPlayers(); }
     /**
      * The map's name, if relevant, or QString().
      */
-    inline QString map() const { return server->map(); }
+    QString map() const { return server->map(); }
     /**
      * The game mode, if relevant, or QString().
      */
-    inline QString mode() const { return server->mode(); }
+    QString mode() const { return server->mode(); }
 
 signals:
     /**
@@ -79,6 +91,12 @@ signals:
      * Signal emitted on errors.
      */
     void errorEncountered(QString text);
+
+public slots:
+    /**
+     * Forcibly update the information by querying the server.
+     */
+    void refresh() {server->refresh();}
 
 };
 
