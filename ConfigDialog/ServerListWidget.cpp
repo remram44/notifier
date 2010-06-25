@@ -9,7 +9,7 @@ ServerListWidget::ServerListWidget(QList<MonitoredServer*> *monitoredServerList,
     setTitle(tr("Monitor"));
     QHBoxLayout *layout = new QHBoxLayout(this);
     treeView = new QTreeView(this);
-    treeView->setRootIsDecorated(true);
+    treeView->setRootIsDecorated(false);
     layout->addWidget(treeView);
     currentServerConfWidget = new ServerConfWidget;
     currentServerConfWidget->setParent(this);
