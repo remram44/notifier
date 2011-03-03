@@ -35,84 +35,103 @@
 <context>
     <name>Notifier</name>
     <message>
-        <location filename="Notifier.cpp" line="60"/>
+        <location filename="Notifier.cpp" line="65"/>
         <source>Notifier</source>
         <translation>Notifier</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="65"/>
+        <location filename="Notifier.cpp" line="70"/>
         <source>Check</source>
         <translation>Vérifier</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="71"/>
+        <location filename="Notifier.cpp" line="76"/>
         <source>Tell me again</source>
         <translation>Dis-moi à nouveau</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="78"/>
+        <location filename="Notifier.cpp" line="84"/>
+        <source>Start automatically</source>
+        <translation>Lancer automatiquement</translation>
+    </message>
+    <message>
+        <location filename="Notifier.cpp" line="95"/>
         <source>Quit</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="157"/>
+        <location filename="Notifier.cpp" line="174"/>
         <source>Unknown server type in configuration file: &quot;%3&quot;, %1, line %2</source>
         <translation>Type de serveur inconnu dans le fichier de configuration : &quot;%3&quot;, %1, ligne %2</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="175"/>
+        <location filename="Notifier.cpp" line="192"/>
         <source>Error reading configuration file: %1, line %2</source>
         <translation>Erreur à la lecture du fichier de configuration : %1, ligne %2</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="198"/>
+        <location filename="Notifier.cpp" line="222"/>
+        <location filename="Notifier.cpp" line="415"/>
+        <location filename="Notifier.cpp" line="462"/>
+        <location filename="Notifier.cpp" line="471"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="199"/>
+        <location filename="Notifier.cpp" line="223"/>
         <source>Error: </source>
         <translation>Erreur : </translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="214"/>
+        <location filename="Notifier.cpp" line="238"/>
         <source>%1/%2 players</source>
         <translation>%1/%2 joueurs</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="216"/>
+        <location filename="Notifier.cpp" line="240"/>
         <source>%1 players</source>
         <translation>%1 joueurs</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="221"/>
+        <location filename="Notifier.cpp" line="245"/>
         <source>%1/%2 players in %4</source>
         <translation>%1/%2 joueurs en %4</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="224"/>
+        <location filename="Notifier.cpp" line="248"/>
         <source>%1 players in %4</source>
         <translation>%1 joueurs en %4</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="232"/>
+        <location filename="Notifier.cpp" line="256"/>
         <source>%1/%2 players on %3</source>
         <translation>%1/%2 joueurs sur %3</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="234"/>
+        <location filename="Notifier.cpp" line="258"/>
         <source>%1 players on %3</source>
         <translation>%1 joueurs sur %3</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="239"/>
+        <location filename="Notifier.cpp" line="263"/>
         <source>%1/%2 players on %3 in %4</source>
         <translation>%1/%2 joueurs sur %3 en %4</translation>
     </message>
     <message>
-        <location filename="Notifier.cpp" line="242"/>
+        <location filename="Notifier.cpp" line="266"/>
         <source>%1 players on %3 in %4</source>
         <translation>%1 joueurs sur %3 en %4</translation>
+    </message>
+    <message>
+        <location filename="Notifier.cpp" line="416"/>
+        <source>Can&apos;t access the registry</source>
+        <translation>Impossible d&apos;accéder au registre</translation>
+    </message>
+    <message>
+        <location filename="Notifier.cpp" line="463"/>
+        <location filename="Notifier.cpp" line="472"/>
+        <source>Can&apos;t write to the registry</source>
+        <translation>Impossible d&apos;écrire dans le registre</translation>
     </message>
 </context>
 <context>
