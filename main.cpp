@@ -11,7 +11,11 @@ int main(int argc, char **argv)
     translator.load(QString("notifier_") + QLocale::system().name());
     app.installTranslator(&translator);
 
-    Notifier teeworlds_notifier;
+    Notifier notifier;
+
+#ifdef WIN32
+    notifier.setExecutablePath(*argv);
+#endif
 
     return app.exec();
 }

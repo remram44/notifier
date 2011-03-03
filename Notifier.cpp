@@ -24,6 +24,11 @@
 #include <QDir>
 #include <QRegExp>
 
+#ifdef _WIN32
+#    include <QMessageBox>
+#    include <windows.h>
+#endif
+
 #include "Teeworlds.h"
 #include "GameSpy.h"
 #include "Urbanterror.h"
@@ -73,6 +78,18 @@ Notifier::Notifier(QWidget *pParent)
             this, SLOT(tellAgain()));
         trayMenu->addAction(tellMe);
     }
+#ifdef _WIN32
+    trayMenu->addSeparator();
+    {
+        m_pAutoStart = new QAction(tr("Start automatically"), this);
+        m_pAutoStart->setCheckable(true);
+        m_pAutoStart->setChecked(false);
+        loadAutoStartState();
+        connect(m_pAutoStart, SIGNAL(triggered()),
+            this, SLOT(setAutoStart()));
+        trayMenu->addAction(m_pAutoStart);
+    }
+#endif
     trayMenu->addSeparator();
     {
         QAction *quitAction = new QAction(tr("Quit"), this);
@@ -180,6 +197,13 @@ Notifier::Notifier(QWidget *pParent)
         }
     }
 }
+
+#ifdef _WIN32
+void Notifier::setExecutablePath(const char *path)
+{
+    m_sPath = path;
+}
+#endif
 
 void Notifier::addServer(Server *serv, const ServerConf &conf)
 {
@@ -345,3 +369,109 @@ void Notifier::iconActivated(QSystemTrayIcon::ActivationReason reason)
     if(reason == QSystemTrayIcon::DoubleClick)
         tellAgain();
 }
+
+#ifdef _WIN32
+#    define REG_WINDOWS_RUN "Software\\Microsoft\\Windows\\CurrentVersion\\Run"
+#    define REG_VALUE_NAME "Notifier"
+
+void Notifier::loadAutoStartState()
+{
+    HKEY hKey;
+    if(RegOpenKeyEx(
+        HKEY_CURRENT_USER,
+        TEXT(REG_WINDOWS_RUN),
+        0,
+        KEY_QUERY_VALUE,
+        &hKey
+    ) != ERROR_SUCCESS)
+        return ; // This is weird ; restricted permissions?
+
+    if(RegQueryValueEx(
+        hKey,
+        TEXT(REG_VALUE_NAME),
+        NULL,
+        NULL,
+        NULL, // ignore value
+        NULL // size
+    ) == ERROR_SUCCESS)
+        m_pAutoStart->setChecked(true);
+
+    RegCloseKey(hKey);
+}
+
+void Notifier::setAutoStart()
+{
+    bool start = m_pAutoStart->isChecked();
+
+    HKEY hKey;
+    if(RegOpenKeyEx(
+        HKEY_CURRENT_USER,
+        TEXT(REG_WINDOWS_RUN),
+        0,
+        KEY_ALL_ACCESS,
+        &hKey
+    ) != ERROR_SUCCESS)
+    {
+        QMessageBox::warning(this, tr("Error"),
+                tr("Can't access the registry"));
+        return ;
+    }
+
+    if(start)
+    {
+        // Get executable filename
+        wchar_t cwd[1024];
+        GetCurrentDirectory(1024, cwd);
+        QString fullname = QString("\"") + QString::fromStdWString(cwd) + "\\" + m_sPath + "\"";
+        const char *path = fullname.toAscii();
+
+        // Convert to UTF-16
+        int size;
+#ifdef UNICODE
+        size = MultiByteToWideChar(
+            CP_ACP,
+            MB_PRECOMPOSED,
+            path,
+            -1,
+            NULL,
+            0
+        );
+        wchar_t *buffer = new wchar_t[size];
+        MultiByteToWideChar(
+            CP_ACP,
+            MB_PRECOMPOSED,
+            path,
+            -1,
+            buffer,
+            size
+        );
+        size *= 2;
+#else
+        char *buffer = path;
+        size = strlen(path)+1;
+#endif
+
+        if(RegSetValueEx(
+            hKey,
+            TEXT(REG_VALUE_NAME),
+            0,
+            REG_SZ,
+            (const unsigned char *)buffer,
+            size
+        ) != ERROR_SUCCESS)
+            QMessageBox::warning(this, tr("Error"),
+                    tr("Can't write to the registry"));
+    }
+    else
+    {
+        if(RegDeleteValue(
+            hKey,
+            TEXT(REG_VALUE_NAME)
+        ) != ERROR_SUCCESS)
+            QMessageBox::warning(this, tr("Error"),
+                    tr("Can't write to the registry"));
+    }
+
+    RegCloseKey(hKey);
+}
+#endif

@@ -135,6 +135,10 @@ class Notifier : public QWidget {
 private:
     QSystemTrayIcon *m_pTrayIcon;
     QSound *m_pBeep;
+#ifdef _WIN32
+    QAction *m_pAutoStart;
+    QString m_sPath;
+#endif
 
     QMap<Server*, ServerConf> m_aServers;
 
@@ -152,6 +156,9 @@ private:
     void addServer(Server *serv, const ServerConf &conf);
     void appendNotification(QString name, unsigned int players,
         unsigned int max, QString map, QString mode);
+#ifdef _WIN32
+    void loadAutoStartState();
+#endif
 
 private slots:
     void displayError(QString error);
@@ -162,9 +169,13 @@ private slots:
     void updateIcon();
     void tellAgain();
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
+    void setAutoStart();
 
 public:
     Notifier(QWidget *pParent = NULL);
+#ifdef _WIN32
+    void setExecutablePath(const char *path);
+#endif
 
 signals:
     void refreshAll();
