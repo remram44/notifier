@@ -422,7 +422,7 @@ void Notifier::setAutoStart()
         // Get executable filename
         wchar_t cwd[1024];
         GetCurrentDirectory(1024, cwd);
-        QString fullname = QString("\"") + QString::fromStdWString(cwd) + "\\" + m_sPath + "\"";
+        QString fullname = QString("\"") + QString::fromStdWString(cwd) + "\\notifier.exe\"";
         const char *path = fullname.toAscii();
 
         // Convert to UTF-16
