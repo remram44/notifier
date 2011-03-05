@@ -101,15 +101,9 @@ Notifier::Notifier(QWidget *pParent)
     m_pTrayIcon->setContextMenu(trayMenu);
     connect(m_pTrayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
         this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
-#ifdef __WIN32__
-    m_IconEmpty = QIcon("icon.png");
-    m_IconPlayers = QIcon("icon2.png");
-    m_pBeep = new QSound("beep.wav");
-#else
-    m_IconEmpty = QIcon(PREFIX "/share/notifier/icon.png");
-    m_IconPlayers = QIcon(PREFIX "/share/notifier/icon2.png");
-    m_pBeep = new QSound(PREFIX "/share/notifier/beep.wab");
-#endif
+    m_IconEmpty = QIcon(":/icon.png");
+    m_IconPlayers = QIcon(":/icon2.png");
+    m_pBeep = new QSound(":/beep.wav");
     m_pTrayIcon->setIcon(m_IconEmpty);
     m_pTrayIcon->show();
 
@@ -130,7 +124,7 @@ Notifier::Notifier(QWidget *pParent)
         has_conf = true;
     else
     {
-        conf.setFileName("default.conf");
+        conf.setFileName(":/default.conf");
         if(conf.open(QIODevice::ReadOnly | QIODevice::Text))
             has_conf = true;
     }
@@ -140,7 +134,7 @@ Notifier::Notifier(QWidget *pParent)
         has_conf = true;
     else
     {
-        conf.setFileName(PREFIX "/share/notifier/default.conf");
+        conf.setFileName(":/default.conf");
         if(conf.open(QIODevice::ReadOnly | QIODevice::Text))
             has_conf = true;
     }

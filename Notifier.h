@@ -22,10 +22,6 @@
 #include <QMap>
 #include <QTimer>
 
-#ifndef PREFIX
-#define PREFIX "/usr/local"
-#endif
-
 /**
  * Utility function.
  *

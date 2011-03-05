@@ -23,11 +23,6 @@ icônes du programme et le son joué.
 un terminal génerera un Makefile, et vous pourrez construire les binaires via
 "make".
 
-    Note pour UNIX : le programme s'attend à être installé dans PREFIX, c'est à
-dire à ce que ses images et sons soient dans PREFIX/share/notifier/ (avec PREFIX
-valant /usr/local par défaut). Ce comportement peut être modifié via l'édition
-du fichier config.h.
-
   4. Installation (Windows)
 
     Placez tous les fichiers de l'archive quelque part et double-cliquez sur

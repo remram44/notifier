@@ -16,6 +16,7 @@ QT += network
 HEADERS = Notifier.h Teeworlds.h GameSpy.h Urbanterror.h Mumble.h
 SOURCES = Notifier.cpp main.cpp Teeworlds.cpp GameSpy.cpp Urbanterror.cpp Mumble.cpp
 
+RESOURCES = notifier.qrc
 RC_FILE = notifier.rc
 
 TRANSLATIONS = notifier_fr.ts
