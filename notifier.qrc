@@ -1,10 +1,9 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
-    <qresource>
+    <qresource prefix="/">
         <file>notifier_fr.qm</file>
         <file>icon.png</file>
         <file>icon2.png</file>
-        <file>beep.wav</file>
         <file>default.conf</file>
     </qresource>
 </RCC>

@@ -103,7 +103,8 @@ Notifier::Notifier(QWidget *pParent)
         this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
     m_IconEmpty = QIcon(":/icon.png");
     m_IconPlayers = QIcon(":/icon2.png");
-    m_pBeep = new QSound(":/beep.wav");
+    m_pBeep = new QSound("beep.wav"); // should use a resource but QSound
+            // doesn't support them yet
     m_pTrayIcon->setIcon(m_IconEmpty);
     m_pTrayIcon->show();
 
